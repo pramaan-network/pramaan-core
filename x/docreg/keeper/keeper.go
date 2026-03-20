@@ -3,7 +3,7 @@ package keeper
 import (
 	"fmt"
 	"pramaan/x/docreg/types"
-
+	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/collections"
 	"cosmossdk.io/core/address"
 	corestore "cosmossdk.io/core/store"
@@ -77,17 +77,19 @@ func (k Keeper) GetAuthority() []byte {
 
 // Store Document
 func (k Keeper) SetDocument(ctx sdk.Context, doc types.Document) error {
-	// 🚫 Check duplicate hash
-	if k.IsHashExists(ctx, doc.Hash) {
-		return fmt.Errorf("document with this hash already exists")
+
+	// 🚫 HARD ENFORCEMENT HERE
+	has, _ := k.HashIndex.Has(ctx, doc.Hash)
+	if has {
+		return errorsmod.Wrapf(types.ErrDocumentAlreadyExists, "hash already registered")
 	}
 
-	// ✅ Store document
+	// store document
 	if err := k.Documents.Set(ctx, doc.Id, doc); err != nil {
 		return err
 	}
 
-	// ✅ Store hash index
+	// store hash index
 	return k.HashIndex.Set(ctx, doc.Hash, doc.Id)
 }
 
@@ -102,6 +104,9 @@ func (k Keeper) GetDocumentByID(ctx sdk.Context, id string) (types.Document, boo
 
 // Hash Check
 func (k Keeper) IsHashExists(ctx sdk.Context, hash string) bool {
-	_, err := k.HashIndex.Get(ctx, hash)
-	return err == nil
+	has, err := k.HashIndex.Has(ctx, hash)
+	if err != nil {
+		return false
+	}
+	return has
 }
