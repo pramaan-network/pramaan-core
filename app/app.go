@@ -46,6 +46,7 @@ import (
 	ibckeeper "github.com/cosmos/ibc-go/v10/modules/core/keeper"
 
 	"pramaan/docs"
+	docregmodulekeeper "pramaan/x/docreg/keeper"
 	pramaanmodulekeeper "pramaan/x/pramaan/keeper"
 )
 
@@ -101,6 +102,7 @@ type App struct {
 	// simulation manager
 	sm            *module.SimulationManager
 	PramaanKeeper pramaanmodulekeeper.Keeper
+	DocregKeeper  docregmodulekeeper.Keeper
 }
 
 func init() {
@@ -181,6 +183,7 @@ func New(
 		&app.CircuitBreakerKeeper,
 		&app.ParamsKeeper,
 		&app.PramaanKeeper,
+		&app.DocregKeeper,
 	); err != nil {
 		panic(err)
 	}

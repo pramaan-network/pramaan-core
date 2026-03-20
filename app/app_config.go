@@ -1,6 +1,8 @@
 package app
 
 import (
+	_ "pramaan/x/docreg/module"
+	docregmoduletypes "pramaan/x/docreg/types"
 	_ "pramaan/x/pramaan/module"
 	pramaanmoduletypes "pramaan/x/pramaan/types"
 	"time"
@@ -83,7 +85,7 @@ var (
 		{Account: nft.ModuleName},
 		{Account: ibctransfertypes.ModuleName, Permissions: []string{authtypes.Minter, authtypes.Burner}},
 		{Account: icatypes.ModuleName},
-	}
+		{Account: docregmoduletypes.ModuleName, Permissions: []string{authtypes.Minter, authtypes.Burner, authtypes.Staking}}}
 
 	// blocked account addresses
 	blockAccAddrs = []string{
@@ -124,14 +126,14 @@ var (
 						// ibc modules
 						ibcexported.ModuleName,
 						// chain modules
-						pramaanmoduletypes.ModuleName},
+						pramaanmoduletypes.ModuleName, docregmoduletypes.ModuleName},
 					EndBlockers: []string{
 						govtypes.ModuleName,
 						stakingtypes.ModuleName,
 						feegrant.ModuleName,
 						group.ModuleName,
 						// chain modules
-						pramaanmoduletypes.ModuleName},
+						pramaanmoduletypes.ModuleName, docregmoduletypes.ModuleName},
 					// The following is mostly only needed when ModuleName != StoreKey name.
 					OverrideStoreKeys: []*runtimev1alpha1.StoreKeyConfig{
 						{
@@ -166,7 +168,7 @@ var (
 						ibctransfertypes.ModuleName,
 						icatypes.ModuleName,
 						// chain modules
-						pramaanmoduletypes.ModuleName},
+						pramaanmoduletypes.ModuleName, docregmoduletypes.ModuleName},
 				}),
 			},
 			{
@@ -264,6 +266,9 @@ var (
 			{
 				Name:   pramaanmoduletypes.ModuleName,
 				Config: appconfig.WrapAny(&pramaanmoduletypes.Module{}),
+			}, {
+				Name:   docregmoduletypes.ModuleName,
+				Config: appconfig.WrapAny(&docregmoduletypes.Module{}),
 			}},
 	})
 )

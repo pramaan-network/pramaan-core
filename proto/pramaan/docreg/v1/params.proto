@@ -1,0 +1,13 @@
+syntax = "proto3";
+package pramaan.docreg.v1;
+
+import "amino/amino.proto";
+import "gogoproto/gogo.proto";
+
+option go_package = "pramaan/x/docreg/types";
+
+// Params defines the parameters for the module.
+message Params {
+  option (amino.name) = "pramaan/x/docreg/Params";
+  option (gogoproto.equal) = true;
+}
