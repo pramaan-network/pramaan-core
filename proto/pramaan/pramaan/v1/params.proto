@@ -1,0 +1,13 @@
+syntax = "proto3";
+package pramaan.pramaan.v1;
+
+import "amino/amino.proto";
+import "gogoproto/gogo.proto";
+
+option go_package = "pramaan/x/pramaan/types";
+
+// Params defines the parameters for the module.
+message Params {
+  option (amino.name) = "pramaan/x/pramaan/Params";
+  option (gogoproto.equal) = true;
+}

@@ -1,0 +1,17 @@
+syntax = "proto3";
+package pramaan.pramaan.v1;
+
+import "amino/amino.proto";
+import "gogoproto/gogo.proto";
+import "pramaan/pramaan/v1/params.proto";
+
+option go_package = "pramaan/x/pramaan/types";
+
+// GenesisState defines the pramaan module's genesis state.
+message GenesisState {
+  // params defines all the parameters of the module.
+  Params params = 1 [
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
+}
