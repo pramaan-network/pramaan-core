@@ -2,15 +2,16 @@ syntax = "proto3";
 
 package pramaan.docreg.v1;
 
-import "pramaan/docreg/v1/tx.proto";
 import "pramaan/docreg/v1/params.proto";
+import "pramaan/docreg/v1/tx.proto";
 
 option go_package = "pramaan/x/docreg/types";
 
 // Query service
 service Query {
   rpc GetDocument(QueryGetDocumentRequest) returns (QueryGetDocumentResponse);
-rpc Params(QueryParamsRequest) returns (QueryParamsResponse);}
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse);
+}
 
 // --------------------
 // DOCUMENT QUERY

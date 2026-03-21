@@ -1,4 +1,4 @@
-package docreg
+package validatorreg
 
 import (
 	"math/rand"
@@ -7,8 +7,8 @@ import (
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 
-	docregsimulation "pramaan/x/docreg/simulation"
-	"pramaan/x/docreg/types"
+	validatorregsimulation "pramaan/x/validatorreg/simulation"
+	"pramaan/x/validatorreg/types"
 )
 
 // GenerateGenesisState creates a randomized GenState of the module.
@@ -17,10 +17,10 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 	for i, acc := range simState.Accounts {
 		accs[i] = acc.Address.String()
 	}
-	docregGenesis := types.GenesisState{
+	validatorregGenesis := types.GenesisState{
 		Params: types.DefaultParams(),
 	}
-	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(&docregGenesis)
+	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(&validatorregGenesis)
 }
 
 // RegisterStoreDecoder registers a decoder.
@@ -30,34 +30,34 @@ func (am AppModule) RegisterStoreDecoder(_ simtypes.StoreDecoderRegistry) {}
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
 	operations := make([]simtypes.WeightedOperation, 0)
 	const (
-		opWeightMsgRegisterDocument          = "op_weight_msg_docreg"
-		defaultWeightMsgRegisterDocument int = 100
+		opWeightMsgAddValidator          = "op_weight_msg_validatorreg"
+		defaultWeightMsgAddValidator int = 100
 	)
 
-	var weightMsgRegisterDocument int
-	simState.AppParams.GetOrGenerate(opWeightMsgRegisterDocument, &weightMsgRegisterDocument, nil,
+	var weightMsgAddValidator int
+	simState.AppParams.GetOrGenerate(opWeightMsgAddValidator, &weightMsgAddValidator, nil,
 		func(_ *rand.Rand) {
-			weightMsgRegisterDocument = defaultWeightMsgRegisterDocument
+			weightMsgAddValidator = defaultWeightMsgAddValidator
 		},
 	)
 	operations = append(operations, simulation.NewWeightedOperation(
-		weightMsgRegisterDocument,
-		docregsimulation.SimulateMsgRegisterDocument(am.authKeeper, am.bankKeeper, am.keeper, simState.TxConfig),
+		weightMsgAddValidator,
+		validatorregsimulation.SimulateMsgAddValidator(am.authKeeper, am.bankKeeper, am.keeper, simState.TxConfig),
 	))
 	const (
-		opWeightMsgTransferDocument          = "op_weight_msg_docreg"
-		defaultWeightMsgTransferDocument int = 100
+		opWeightMsgRemoveValidator          = "op_weight_msg_validatorreg"
+		defaultWeightMsgRemoveValidator int = 100
 	)
 
-	var weightMsgTransferDocument int
-	simState.AppParams.GetOrGenerate(opWeightMsgTransferDocument, &weightMsgTransferDocument, nil,
+	var weightMsgRemoveValidator int
+	simState.AppParams.GetOrGenerate(opWeightMsgRemoveValidator, &weightMsgRemoveValidator, nil,
 		func(_ *rand.Rand) {
-			weightMsgTransferDocument = defaultWeightMsgTransferDocument
+			weightMsgRemoveValidator = defaultWeightMsgRemoveValidator
 		},
 	)
 	operations = append(operations, simulation.NewWeightedOperation(
-		weightMsgTransferDocument,
-		docregsimulation.SimulateMsgTransferDocument(am.authKeeper, am.bankKeeper, am.keeper, simState.TxConfig),
+		weightMsgRemoveValidator,
+		validatorregsimulation.SimulateMsgRemoveValidator(am.authKeeper, am.bankKeeper, am.keeper, simState.TxConfig),
 	))
 
 	return operations

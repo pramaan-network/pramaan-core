@@ -1,14 +1,14 @@
 syntax = "proto3";
 
-package pramaan.docreg.v1;
+package pramaan.validatorreg.v1;
 
 import "amino/amino.proto";
 import "cosmos/msg/v1/msg.proto";
 import "cosmos_proto/cosmos.proto";
 import "gogoproto/gogo.proto";
-import "pramaan/docreg/v1/params.proto";
+import "pramaan/validatorreg/v1/params.proto";
 
-option go_package = "pramaan/x/docreg/types";
+option go_package = "pramaan/x/validatorreg/types";
 
 // Msg defines the Msg service.
 service Msg {
@@ -18,17 +18,17 @@ service Msg {
   // parameters. The authority defaults to the x/gov module account.
   rpc UpdateParams(MsgUpdateParams) returns (MsgUpdateParamsResponse);
 
-  // RegisterDocument defines the RegisterDocument RPC.
-  rpc RegisterDocument(MsgRegisterDocument) returns (MsgRegisterDocumentResponse);
+  // AddValidator defines the AddValidator RPC.
+  rpc AddValidator(MsgAddValidator) returns (MsgAddValidatorResponse);
 
-  // TransferDocument defines the TransferDocument RPC.
-  rpc TransferDocument(MsgTransferDocument) returns (MsgTransferDocumentResponse);
+  // RemoveValidator defines the RemoveValidator RPC.
+  rpc RemoveValidator(MsgRemoveValidator) returns (MsgRemoveValidatorResponse);
 }
 
 // MsgUpdateParams is the Msg/UpdateParams request type.
 message MsgUpdateParams {
   option (cosmos.msg.v1.signer) = "authority";
-  option (amino.name) = "pramaan/x/docreg/MsgUpdateParams";
+  option (amino.name) = "pramaan/x/validatorreg/MsgUpdateParams";
 
   // authority is the address that controls the module (defaults to x/gov unless overwritten).
   string authority = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
@@ -46,41 +46,22 @@ message MsgUpdateParams {
 // MsgUpdateParams message.
 message MsgUpdateParamsResponse {}
 
-message Document {
-  string id = 1;
-  string hash = 2;
-  string owner = 3;
-  string issuer = 4;
-  string type = 5;
-  string status = 6;
-  int64 timestamp = 7;
-  string metadata = 8;
-  string token_type = 9; // "SBT" or "NFT"
-  bool transferable = 10; // true/false
-}
-
-// MsgRegisterDocument defines the MsgRegisterDocument message.
-message MsgRegisterDocument {
+// MsgAddValidator defines the MsgAddValidator message.
+message MsgAddValidator {
   option (cosmos.msg.v1.signer) = "creator";
   string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
-  string id = 2;
-  string hash = 3;
-  string owner = 4;
-  string issuer = 5;
-  string doc_type = 6;
-  string metadata = 7;
+  string address = 2;
 }
 
-// MsgRegisterDocumentResponse defines the MsgRegisterDocumentResponse message.
-message MsgRegisterDocumentResponse {}
+// MsgAddValidatorResponse defines the MsgAddValidatorResponse message.
+message MsgAddValidatorResponse {}
 
-// MsgTransferDocument defines the MsgTransferDocument message.
-message MsgTransferDocument {
+// MsgRemoveValidator defines the MsgRemoveValidator message.
+message MsgRemoveValidator {
   option (cosmos.msg.v1.signer) = "creator";
   string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
-  string id = 2;
-  string new_owner = 3;
+  string address = 2;
 }
 
-// MsgTransferDocumentResponse defines the MsgTransferDocumentResponse message.
-message MsgTransferDocumentResponse {}
+// MsgRemoveValidatorResponse defines the MsgRemoveValidatorResponse message.
+message MsgRemoveValidatorResponse {}

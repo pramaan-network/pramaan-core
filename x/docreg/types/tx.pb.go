@@ -125,14 +125,16 @@ func (m *MsgUpdateParamsResponse) XXX_DiscardUnknown() {
 var xxx_messageInfo_MsgUpdateParamsResponse proto.InternalMessageInfo
 
 type Document struct {
-	Id        string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Hash      string `protobuf:"bytes,2,opt,name=hash,proto3" json:"hash,omitempty"`
-	Owner     string `protobuf:"bytes,3,opt,name=owner,proto3" json:"owner,omitempty"`
-	Issuer    string `protobuf:"bytes,4,opt,name=issuer,proto3" json:"issuer,omitempty"`
-	Type      string `protobuf:"bytes,5,opt,name=type,proto3" json:"type,omitempty"`
-	Status    string `protobuf:"bytes,6,opt,name=status,proto3" json:"status,omitempty"`
-	Timestamp int64  `protobuf:"varint,7,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
-	Metadata  string `protobuf:"bytes,8,opt,name=metadata,proto3" json:"metadata,omitempty"`
+	Id           string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Hash         string `protobuf:"bytes,2,opt,name=hash,proto3" json:"hash,omitempty"`
+	Owner        string `protobuf:"bytes,3,opt,name=owner,proto3" json:"owner,omitempty"`
+	Issuer       string `protobuf:"bytes,4,opt,name=issuer,proto3" json:"issuer,omitempty"`
+	Type         string `protobuf:"bytes,5,opt,name=type,proto3" json:"type,omitempty"`
+	Status       string `protobuf:"bytes,6,opt,name=status,proto3" json:"status,omitempty"`
+	Timestamp    int64  `protobuf:"varint,7,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
+	Metadata     string `protobuf:"bytes,8,opt,name=metadata,proto3" json:"metadata,omitempty"`
+	TokenType    string `protobuf:"bytes,9,opt,name=token_type,json=tokenType,proto3" json:"token_type,omitempty"`
+	Transferable bool   `protobuf:"varint,10,opt,name=transferable,proto3" json:"transferable,omitempty"`
 }
 
 func (m *Document) Reset()         { *m = Document{} }
@@ -222,6 +224,20 @@ func (m *Document) GetMetadata() string {
 		return m.Metadata
 	}
 	return ""
+}
+
+func (m *Document) GetTokenType() string {
+	if m != nil {
+		return m.TokenType
+	}
+	return ""
+}
+
+func (m *Document) GetTransferable() bool {
+	if m != nil {
+		return m.Transferable
+	}
+	return false
 }
 
 // MsgRegisterDocument defines the MsgRegisterDocument message.
@@ -354,52 +370,158 @@ func (m *MsgRegisterDocumentResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgRegisterDocumentResponse proto.InternalMessageInfo
 
+// MsgTransferDocument defines the MsgTransferDocument message.
+type MsgTransferDocument struct {
+	Creator  string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+	Id       string `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
+	NewOwner string `protobuf:"bytes,3,opt,name=new_owner,json=newOwner,proto3" json:"new_owner,omitempty"`
+}
+
+func (m *MsgTransferDocument) Reset()         { *m = MsgTransferDocument{} }
+func (m *MsgTransferDocument) String() string { return proto.CompactTextString(m) }
+func (*MsgTransferDocument) ProtoMessage()    {}
+func (*MsgTransferDocument) Descriptor() ([]byte, []int) {
+	return fileDescriptor_1aa56ec1b472b08c, []int{5}
+}
+func (m *MsgTransferDocument) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgTransferDocument) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgTransferDocument.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgTransferDocument) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgTransferDocument.Merge(m, src)
+}
+func (m *MsgTransferDocument) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgTransferDocument) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgTransferDocument.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgTransferDocument proto.InternalMessageInfo
+
+func (m *MsgTransferDocument) GetCreator() string {
+	if m != nil {
+		return m.Creator
+	}
+	return ""
+}
+
+func (m *MsgTransferDocument) GetId() string {
+	if m != nil {
+		return m.Id
+	}
+	return ""
+}
+
+func (m *MsgTransferDocument) GetNewOwner() string {
+	if m != nil {
+		return m.NewOwner
+	}
+	return ""
+}
+
+// MsgTransferDocumentResponse defines the MsgTransferDocumentResponse message.
+type MsgTransferDocumentResponse struct {
+}
+
+func (m *MsgTransferDocumentResponse) Reset()         { *m = MsgTransferDocumentResponse{} }
+func (m *MsgTransferDocumentResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgTransferDocumentResponse) ProtoMessage()    {}
+func (*MsgTransferDocumentResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_1aa56ec1b472b08c, []int{6}
+}
+func (m *MsgTransferDocumentResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgTransferDocumentResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgTransferDocumentResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgTransferDocumentResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgTransferDocumentResponse.Merge(m, src)
+}
+func (m *MsgTransferDocumentResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgTransferDocumentResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgTransferDocumentResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgTransferDocumentResponse proto.InternalMessageInfo
+
 func init() {
 	proto.RegisterType((*MsgUpdateParams)(nil), "pramaan.docreg.v1.MsgUpdateParams")
 	proto.RegisterType((*MsgUpdateParamsResponse)(nil), "pramaan.docreg.v1.MsgUpdateParamsResponse")
 	proto.RegisterType((*Document)(nil), "pramaan.docreg.v1.Document")
 	proto.RegisterType((*MsgRegisterDocument)(nil), "pramaan.docreg.v1.MsgRegisterDocument")
 	proto.RegisterType((*MsgRegisterDocumentResponse)(nil), "pramaan.docreg.v1.MsgRegisterDocumentResponse")
+	proto.RegisterType((*MsgTransferDocument)(nil), "pramaan.docreg.v1.MsgTransferDocument")
+	proto.RegisterType((*MsgTransferDocumentResponse)(nil), "pramaan.docreg.v1.MsgTransferDocumentResponse")
 }
 
 func init() { proto.RegisterFile("pramaan/docreg/v1/tx.proto", fileDescriptor_1aa56ec1b472b08c) }
 
 var fileDescriptor_1aa56ec1b472b08c = []byte{
-	// 544 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x53, 0xbf, 0x6f, 0xd3, 0x40,
-	0x14, 0xce, 0xe5, 0x77, 0x8e, 0x0a, 0xe8, 0x11, 0xb5, 0x8e, 0x01, 0x13, 0x79, 0x40, 0x51, 0x24,
-	0x6c, 0x9a, 0x4a, 0x0c, 0x15, 0x0b, 0x11, 0x6b, 0x24, 0x64, 0x60, 0x61, 0xa0, 0x3a, 0xec, 0x93,
-	0x63, 0xa4, 0xf3, 0x59, 0x77, 0x97, 0xd2, 0x6e, 0x88, 0x91, 0x89, 0x3f, 0x83, 0x31, 0x03, 0x23,
-	0x13, 0x53, 0xc7, 0x8a, 0xa9, 0x13, 0xaa, 0x92, 0x21, 0xff, 0x06, 0xf2, 0x9d, 0xdd, 0x90, 0xd8,
-	0x52, 0x59, 0xac, 0x7b, 0xef, 0x7d, 0xef, 0xc7, 0xf7, 0xbd, 0x67, 0x68, 0x26, 0x1c, 0x53, 0x8c,
-	0x63, 0x37, 0x60, 0x3e, 0x27, 0xa1, 0x7b, 0x72, 0xe0, 0xca, 0x53, 0x27, 0xe1, 0x4c, 0x32, 0xb4,
-	0x9b, 0xc5, 0x1c, 0x1d, 0x73, 0x4e, 0x0e, 0xcc, 0x5d, 0x4c, 0xa3, 0x98, 0xb9, 0xea, 0xab, 0x51,
-	0xe6, 0xbe, 0xcf, 0x04, 0x65, 0xc2, 0xa5, 0x42, 0x65, 0x53, 0x11, 0x66, 0x81, 0x9e, 0x0e, 0x1c,
-	0x2b, 0xcb, 0xd5, 0x46, 0x16, 0xea, 0x86, 0x2c, 0x64, 0xda, 0x9f, 0xbe, 0x32, 0xaf, 0x55, 0x9c,
-	0x25, 0xc1, 0x1c, 0xd3, 0x2c, 0xcb, 0xfe, 0x09, 0xe0, 0x9d, 0x89, 0x08, 0xdf, 0x26, 0x01, 0x96,
-	0xe4, 0x95, 0x8a, 0xa0, 0x67, 0xb0, 0x83, 0x67, 0x72, 0xca, 0x78, 0x24, 0xcf, 0x0c, 0xd0, 0x07,
-	0x83, 0xce, 0xd8, 0xf8, 0xfd, 0xe3, 0x49, 0x37, 0x6b, 0xf7, 0x22, 0x08, 0x38, 0x11, 0xe2, 0xb5,
-	0xe4, 0x51, 0x1c, 0x7a, 0x6b, 0x28, 0x7a, 0x0e, 0x9b, 0xba, 0xb6, 0x51, 0xed, 0x83, 0xc1, 0xad,
-	0x51, 0xcf, 0x29, 0x90, 0x75, 0x74, 0x8b, 0x71, 0xe7, 0xfc, 0xcf, 0xa3, 0xca, 0xf7, 0xd5, 0x7c,
-	0x08, 0xbc, 0x2c, 0xe7, 0xe8, 0xf0, 0xcb, 0x6a, 0x3e, 0x5c, 0x57, 0xfb, 0xba, 0x9a, 0x0f, 0xfb,
-	0xf9, 0xf0, 0xa7, 0xf9, 0xf8, 0x5b, 0xa3, 0xda, 0x3d, 0xb8, 0xbf, 0xe5, 0xf2, 0x88, 0x48, 0x58,
-	0x2c, 0x88, 0xfd, 0x0b, 0xc0, 0xf6, 0x4b, 0xe6, 0xcf, 0x28, 0x89, 0x25, 0xba, 0x0d, 0xab, 0x51,
-	0xa0, 0xb9, 0x78, 0xd5, 0x28, 0x40, 0x08, 0xd6, 0xa7, 0x58, 0x4c, 0xd5, 0xa0, 0x1d, 0x4f, 0xbd,
-	0x51, 0x17, 0x36, 0xd8, 0xa7, 0x98, 0x70, 0xa3, 0xa6, 0x9c, 0xda, 0x40, 0x7b, 0xb0, 0x19, 0x09,
-	0x31, 0x23, 0xdc, 0xa8, 0x2b, 0x77, 0x66, 0xa5, 0x15, 0xe4, 0x59, 0x42, 0x8c, 0x86, 0xae, 0x90,
-	0xbe, 0x53, 0xac, 0x90, 0x58, 0xce, 0x84, 0xd1, 0xd4, 0x58, 0x6d, 0xa1, 0x07, 0xb0, 0x23, 0x23,
-	0x4a, 0x84, 0xc4, 0x34, 0x31, 0x5a, 0x7d, 0x30, 0xa8, 0x79, 0x6b, 0x07, 0x32, 0x61, 0x9b, 0x12,
-	0x89, 0x03, 0x2c, 0xb1, 0xd1, 0x56, 0x79, 0xd7, 0xb6, 0x7d, 0x05, 0xe0, 0xbd, 0x89, 0x08, 0x3d,
-	0x12, 0x46, 0x42, 0x12, 0x7e, 0xcd, 0x67, 0x04, 0x5b, 0x3e, 0x27, 0x58, 0x32, 0x7e, 0xe3, 0x82,
-	0x72, 0x60, 0xa6, 0x41, 0xb5, 0xa0, 0x41, 0xad, 0x4c, 0x83, 0x7a, 0xb9, 0x06, 0x8d, 0x0d, 0x0d,
-	0x7a, 0xb0, 0x1d, 0x30, 0xff, 0x58, 0xe9, 0xa0, 0x19, 0xb7, 0x02, 0xe6, 0xbf, 0x49, 0xa5, 0xf8,
-	0x97, 0x54, 0x6b, 0x93, 0xd4, 0xd1, 0x4e, 0xba, 0xe9, 0x7c, 0x2c, 0xfb, 0x21, 0xbc, 0x5f, 0xc2,
-	0x30, 0x5f, 0xe3, 0xe8, 0x12, 0xc0, 0xda, 0x44, 0x84, 0xe8, 0x3d, 0xdc, 0xd9, 0x38, 0x52, 0xbb,
-	0xe4, 0xb8, 0xb6, 0x4e, 0xc1, 0x1c, 0xde, 0x8c, 0xc9, 0xfb, 0xa0, 0x8f, 0xf0, 0x6e, 0x41, 0xe5,
-	0xc7, 0xe5, 0xf9, 0xdb, 0x38, 0xd3, 0xf9, 0x3f, 0x5c, 0xde, 0xcb, 0x6c, 0x7c, 0x4e, 0x2f, 0x7f,
-	0xfc, 0xf4, 0x7c, 0x61, 0x81, 0x8b, 0x85, 0x05, 0xae, 0x16, 0x16, 0xf8, 0xb6, 0xb4, 0x2a, 0x17,
-	0x4b, 0xab, 0x72, 0xb9, 0xb4, 0x2a, 0xef, 0xf6, 0x0a, 0x87, 0x9f, 0x6a, 0x2c, 0x3e, 0x34, 0xd5,
-	0x4f, 0x7b, 0xf8, 0x37, 0x00, 0x00, 0xff, 0xff, 0x53, 0x38, 0xf1, 0xea, 0x62, 0x04, 0x00, 0x00,
+	// 627 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x54, 0x3d, 0x6f, 0xd4, 0x40,
+	0x10, 0x3d, 0xdf, 0xe5, 0x3e, 0x3c, 0x44, 0x40, 0x96, 0x28, 0xf1, 0x39, 0xc4, 0x9c, 0x5c, 0xa0,
+	0xd3, 0x49, 0xd8, 0x24, 0x91, 0x28, 0x22, 0x1a, 0x22, 0xda, 0x08, 0x64, 0x42, 0x43, 0x41, 0xb4,
+	0xb1, 0x17, 0xc7, 0x80, 0xbd, 0xd6, 0xee, 0x5e, 0x3e, 0x3a, 0x84, 0xa0, 0xa1, 0xe2, 0x67, 0x50,
+	0xa6, 0xa0, 0xa4, 0xa4, 0x48, 0x19, 0x51, 0x51, 0xa1, 0x28, 0x29, 0xf2, 0x37, 0x90, 0x77, 0xed,
+	0x24, 0x67, 0x3b, 0x0a, 0x05, 0xcd, 0x69, 0x67, 0xe6, 0xcd, 0xbe, 0x37, 0xef, 0xc6, 0x0b, 0x66,
+	0xca, 0x70, 0x8c, 0x71, 0xe2, 0x06, 0xd4, 0x67, 0x24, 0x74, 0x77, 0x96, 0x5c, 0xb1, 0xe7, 0xa4,
+	0x8c, 0x0a, 0x8a, 0x66, 0xf2, 0x9a, 0xa3, 0x6a, 0xce, 0xce, 0x92, 0x39, 0x83, 0xe3, 0x28, 0xa1,
+	0xae, 0xfc, 0x55, 0x28, 0x73, 0xde, 0xa7, 0x3c, 0xa6, 0xdc, 0x8d, 0xb9, 0xec, 0x8e, 0x79, 0x98,
+	0x17, 0xfa, 0xaa, 0xb0, 0x29, 0x23, 0x57, 0x05, 0x79, 0x69, 0x36, 0xa4, 0x21, 0x55, 0xf9, 0xec,
+	0x94, 0x67, 0xad, 0xaa, 0x96, 0x14, 0x33, 0x1c, 0xe7, 0x5d, 0xf6, 0x0f, 0x0d, 0x6e, 0xad, 0xf3,
+	0xf0, 0x65, 0x1a, 0x60, 0x41, 0x9e, 0xcb, 0x0a, 0x7a, 0x04, 0x3a, 0x1e, 0x8b, 0x6d, 0xca, 0x22,
+	0xb1, 0x6f, 0x68, 0x03, 0x6d, 0xa8, 0xaf, 0x19, 0xbf, 0xbe, 0x3f, 0x98, 0xcd, 0xe9, 0x9e, 0x04,
+	0x01, 0x23, 0x9c, 0xbf, 0x10, 0x2c, 0x4a, 0x42, 0xef, 0x02, 0x8a, 0x1e, 0x43, 0x47, 0xdd, 0x6d,
+	0x34, 0x07, 0xda, 0xf0, 0xc6, 0x72, 0xdf, 0xa9, 0x0c, 0xeb, 0x28, 0x8a, 0x35, 0xfd, 0xf0, 0xcf,
+	0xbd, 0xc6, 0xb7, 0xb3, 0x83, 0x91, 0xe6, 0xe5, 0x3d, 0xab, 0x2b, 0x1f, 0xcf, 0x0e, 0x46, 0x17,
+	0xb7, 0x7d, 0x39, 0x3b, 0x18, 0x0d, 0x0a, 0xf1, 0x7b, 0x85, 0xfc, 0x92, 0x54, 0xbb, 0x0f, 0xf3,
+	0xa5, 0x94, 0x47, 0x78, 0x4a, 0x13, 0x4e, 0xec, 0xcf, 0x4d, 0xe8, 0x3d, 0xa5, 0xfe, 0x38, 0x26,
+	0x89, 0x40, 0x37, 0xa1, 0x19, 0x05, 0x6a, 0x16, 0xaf, 0x19, 0x05, 0x08, 0xc1, 0xd4, 0x36, 0xe6,
+	0xdb, 0x52, 0xa8, 0xee, 0xc9, 0x33, 0x9a, 0x85, 0x36, 0xdd, 0x4d, 0x08, 0x33, 0x5a, 0x32, 0xa9,
+	0x02, 0x34, 0x07, 0x9d, 0x88, 0xf3, 0x31, 0x61, 0xc6, 0x94, 0x4c, 0xe7, 0x51, 0x76, 0x83, 0xd8,
+	0x4f, 0x89, 0xd1, 0x56, 0x37, 0x64, 0xe7, 0x0c, 0xcb, 0x05, 0x16, 0x63, 0x6e, 0x74, 0x14, 0x56,
+	0x45, 0xe8, 0x2e, 0xe8, 0x22, 0x8a, 0x09, 0x17, 0x38, 0x4e, 0x8d, 0xee, 0x40, 0x1b, 0xb6, 0xbc,
+	0x8b, 0x04, 0x32, 0xa1, 0x17, 0x13, 0x81, 0x03, 0x2c, 0xb0, 0xd1, 0x93, 0x7d, 0xe7, 0x31, 0x5a,
+	0x04, 0x10, 0xf4, 0x1d, 0x49, 0x36, 0x25, 0x97, 0x2e, 0xab, 0xba, 0xcc, 0x6c, 0x64, 0x84, 0x36,
+	0x4c, 0x0b, 0x86, 0x13, 0xfe, 0x86, 0x30, 0xbc, 0xf5, 0x9e, 0x18, 0x30, 0xd0, 0x86, 0x3d, 0x6f,
+	0x22, 0x67, 0x1f, 0x6b, 0x70, 0x67, 0x9d, 0x87, 0x1e, 0x09, 0x23, 0x2e, 0x08, 0x3b, 0xb7, 0x64,
+	0x19, 0xba, 0x3e, 0x23, 0x58, 0x50, 0x76, 0xed, 0x7f, 0x5c, 0x00, 0x73, 0x1b, 0x9b, 0x15, 0x1b,
+	0x5b, 0x75, 0x36, 0x4e, 0xd5, 0xdb, 0xd8, 0x9e, 0xb0, 0xb1, 0x0f, 0xbd, 0x80, 0xfa, 0x6a, 0x3c,
+	0x65, 0x5a, 0x37, 0xa0, 0xbe, 0x1c, 0xee, 0xb2, 0x2f, 0xdd, 0x49, 0x5f, 0x56, 0xa7, 0xb3, 0x65,
+	0x29, 0x64, 0xd9, 0x8b, 0xb0, 0x50, 0x33, 0xe1, 0xf9, 0x26, 0x7c, 0x52, 0x0e, 0x6c, 0xe4, 0xae,
+	0xfc, 0x57, 0x07, 0x16, 0x40, 0x4f, 0xc8, 0xee, 0xe6, 0xe5, 0xc5, 0xe9, 0x25, 0x64, 0xf7, 0x59,
+	0x16, 0xd7, 0xaa, 0x2c, 0xab, 0x28, 0x54, 0x2e, 0xff, 0x6c, 0x42, 0x6b, 0x9d, 0x87, 0xe8, 0x35,
+	0x4c, 0x4f, 0x7c, 0x8d, 0x76, 0xcd, 0x57, 0x54, 0xda, 0x79, 0x73, 0x74, 0x3d, 0xa6, 0xe0, 0x41,
+	0x6f, 0xe1, 0x76, 0x65, 0x17, 0xee, 0xd7, 0xf7, 0x97, 0x71, 0xa6, 0xf3, 0x6f, 0xb8, 0xcb, 0x5c,
+	0x15, 0xd7, 0xaf, 0xe0, 0x2a, 0xe3, 0xae, 0xe2, 0xba, 0xca, 0x3f, 0xb3, 0xfd, 0x21, 0x7b, 0x4e,
+	0xd6, 0x1e, 0x1e, 0x9e, 0x58, 0xda, 0xd1, 0x89, 0xa5, 0x1d, 0x9f, 0x58, 0xda, 0xd7, 0x53, 0xab,
+	0x71, 0x74, 0x6a, 0x35, 0x7e, 0x9f, 0x5a, 0x8d, 0x57, 0x73, 0x95, 0xd7, 0x24, 0xdb, 0x3a, 0xbe,
+	0xd5, 0x91, 0x2f, 0xe1, 0xca, 0xdf, 0x00, 0x00, 0x00, 0xff, 0xff, 0x99, 0x70, 0xc8, 0x3f, 0xb7,
+	0x05, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -419,6 +541,8 @@ type MsgClient interface {
 	UpdateParams(ctx context.Context, in *MsgUpdateParams, opts ...grpc.CallOption) (*MsgUpdateParamsResponse, error)
 	// RegisterDocument defines the RegisterDocument RPC.
 	RegisterDocument(ctx context.Context, in *MsgRegisterDocument, opts ...grpc.CallOption) (*MsgRegisterDocumentResponse, error)
+	// TransferDocument defines the TransferDocument RPC.
+	TransferDocument(ctx context.Context, in *MsgTransferDocument, opts ...grpc.CallOption) (*MsgTransferDocumentResponse, error)
 }
 
 type msgClient struct {
@@ -447,6 +571,15 @@ func (c *msgClient) RegisterDocument(ctx context.Context, in *MsgRegisterDocumen
 	return out, nil
 }
 
+func (c *msgClient) TransferDocument(ctx context.Context, in *MsgTransferDocument, opts ...grpc.CallOption) (*MsgTransferDocumentResponse, error) {
+	out := new(MsgTransferDocumentResponse)
+	err := c.cc.Invoke(ctx, "/pramaan.docreg.v1.Msg/TransferDocument", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
 	// UpdateParams defines a (governance) operation for updating the module
@@ -454,6 +587,8 @@ type MsgServer interface {
 	UpdateParams(context.Context, *MsgUpdateParams) (*MsgUpdateParamsResponse, error)
 	// RegisterDocument defines the RegisterDocument RPC.
 	RegisterDocument(context.Context, *MsgRegisterDocument) (*MsgRegisterDocumentResponse, error)
+	// TransferDocument defines the TransferDocument RPC.
+	TransferDocument(context.Context, *MsgTransferDocument) (*MsgTransferDocumentResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
@@ -465,6 +600,9 @@ func (*UnimplementedMsgServer) UpdateParams(ctx context.Context, req *MsgUpdateP
 }
 func (*UnimplementedMsgServer) RegisterDocument(ctx context.Context, req *MsgRegisterDocument) (*MsgRegisterDocumentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RegisterDocument not implemented")
+}
+func (*UnimplementedMsgServer) TransferDocument(ctx context.Context, req *MsgTransferDocument) (*MsgTransferDocumentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TransferDocument not implemented")
 }
 
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
@@ -507,6 +645,24 @@ func _Msg_RegisterDocument_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_TransferDocument_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgTransferDocument)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).TransferDocument(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pramaan.docreg.v1.Msg/TransferDocument",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).TransferDocument(ctx, req.(*MsgTransferDocument))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var Msg_serviceDesc = _Msg_serviceDesc
 var _Msg_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "pramaan.docreg.v1.Msg",
@@ -519,6 +675,10 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RegisterDocument",
 			Handler:    _Msg_RegisterDocument_Handler,
+		},
+		{
+			MethodName: "TransferDocument",
+			Handler:    _Msg_TransferDocument_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -608,6 +768,23 @@ func (m *Document) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if m.Transferable {
+		i--
+		if m.Transferable {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x50
+	}
+	if len(m.TokenType) > 0 {
+		i -= len(m.TokenType)
+		copy(dAtA[i:], m.TokenType)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.TokenType)))
+		i--
+		dAtA[i] = 0x4a
+	}
 	if len(m.Metadata) > 0 {
 		i -= len(m.Metadata)
 		copy(dAtA[i:], m.Metadata)
@@ -760,6 +937,73 @@ func (m *MsgRegisterDocumentResponse) MarshalToSizedBuffer(dAtA []byte) (int, er
 	return len(dAtA) - i, nil
 }
 
+func (m *MsgTransferDocument) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgTransferDocument) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgTransferDocument) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.NewOwner) > 0 {
+		i -= len(m.NewOwner)
+		copy(dAtA[i:], m.NewOwner)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.NewOwner)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.Id) > 0 {
+		i -= len(m.Id)
+		copy(dAtA[i:], m.Id)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Id)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Creator) > 0 {
+		i -= len(m.Creator)
+		copy(dAtA[i:], m.Creator)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Creator)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgTransferDocumentResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgTransferDocumentResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgTransferDocumentResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintTx(dAtA []byte, offset int, v uint64) int {
 	offset -= sovTx(v)
 	base := offset
@@ -832,6 +1076,13 @@ func (m *Document) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovTx(uint64(l))
 	}
+	l = len(m.TokenType)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.Transferable {
+		n += 2
+	}
 	return n
 }
 
@@ -873,6 +1124,36 @@ func (m *MsgRegisterDocument) Size() (n int) {
 }
 
 func (m *MsgRegisterDocumentResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgTransferDocument) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Creator)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Id)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.NewOwner)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgTransferDocumentResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1324,6 +1605,58 @@ func (m *Document) Unmarshal(dAtA []byte) error {
 			}
 			m.Metadata = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
+		case 9:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TokenType", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.TokenType = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 10:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Transferable", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.Transferable = bool(v != 0)
 		default:
 			iNdEx = preIndex
 			skippy, err := skipTx(dAtA[iNdEx:])
@@ -1646,6 +1979,202 @@ func (m *MsgRegisterDocumentResponse) Unmarshal(dAtA []byte) error {
 		}
 		if fieldNum <= 0 {
 			return fmt.Errorf("proto: MsgRegisterDocumentResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgTransferDocument) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgTransferDocument: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgTransferDocument: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Creator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Id = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field NewOwner", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.NewOwner = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgTransferDocumentResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgTransferDocumentResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgTransferDocumentResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:

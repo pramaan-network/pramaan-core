@@ -3,9 +3,10 @@ package keeper
 import (
 	"context"
 
+	"pramaan/x/docreg/types"
+
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"pramaan/x/docreg/types"
 )
 
 func (k msgServer) RegisterDocument(goCtx context.Context, msg *types.MsgRegisterDocument) (*types.MsgRegisterDocumentResponse, error) {
@@ -22,15 +23,26 @@ func (k msgServer) RegisterDocument(goCtx context.Context, msg *types.MsgRegiste
 	}
 
 	// ✅ CREATE DOCUMENT
+	// 🔥 TOKENIZATION LOGIC
+	tokenType := "SBT"
+	transferable := false
+
+	if msg.DocType == "land_property" {
+		tokenType = "NFT"
+		transferable = true
+	}
+
 	doc := types.Document{
-		Id:        msg.Id,
-		Hash:      msg.Hash,
-		Owner:     msg.Owner,
-		Issuer:    msg.Issuer,
-		Type:      msg.DocType,
-		Status:    "ISSUED",
-		Timestamp: ctx.BlockTime().Unix(),
-		Metadata:  msg.Metadata,
+		Id:           msg.Id,
+		Hash:         msg.Hash,
+		Owner:        msg.Owner,
+		Issuer:       msg.Issuer,
+		Type:         msg.DocType,
+		Status:       "ISSUED",
+		Timestamp:    ctx.BlockTime().Unix(),
+		Metadata:     msg.Metadata,
+		TokenType:    tokenType,
+		Transferable: transferable,
 	}
 
 	// ✅ STORE

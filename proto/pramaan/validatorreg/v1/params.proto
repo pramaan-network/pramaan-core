@@ -1,0 +1,13 @@
+syntax = "proto3";
+package pramaan.validatorreg.v1;
+
+import "amino/amino.proto";
+import "gogoproto/gogo.proto";
+
+option go_package = "pramaan/x/validatorreg/types";
+
+// Params defines the parameters for the module.
+message Params {
+  option (amino.name) = "pramaan/x/validatorreg/Params";
+  option (gogoproto.equal) = true;
+}

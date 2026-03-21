@@ -8,11 +8,11 @@ import (
 
 func RegisterInterfaces(registrar codectypes.InterfaceRegistry) {
 	registrar.RegisterImplementations((*sdk.Msg)(nil),
-		&MsgTransferDocument{},
+		&MsgRemoveValidator{},
 	)
 
 	registrar.RegisterImplementations((*sdk.Msg)(nil),
-		&MsgRegisterDocument{},
+		&MsgAddValidator{},
 	)
 
 	registrar.RegisterImplementations((*sdk.Msg)(nil),

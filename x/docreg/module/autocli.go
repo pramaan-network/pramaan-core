@@ -39,6 +39,12 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					Short:          "Send a register-document tx",
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "id"}, {ProtoField: "hash"}, {ProtoField: "owner"}, {ProtoField: "issuer"}, {ProtoField: "doc_type"}, {ProtoField: "metadata"}},
 				},
+				{
+					RpcMethod:      "TransferDocument",
+					Use:            "transfer-document [id] [new-owner]",
+					Short:          "Send a transfer-document tx",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "id"}, {ProtoField: "new_owner"}},
+				},
 			},
 		},
 	}

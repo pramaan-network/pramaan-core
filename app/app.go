@@ -48,6 +48,7 @@ import (
 	"pramaan/docs"
 	docregmodulekeeper "pramaan/x/docreg/keeper"
 	pramaanmodulekeeper "pramaan/x/pramaan/keeper"
+	validatorregmodulekeeper "pramaan/x/validatorreg/keeper"
 )
 
 const (
@@ -100,9 +101,10 @@ type App struct {
 	TransferKeeper      ibctransferkeeper.Keeper
 
 	// simulation manager
-	sm            *module.SimulationManager
-	PramaanKeeper pramaanmodulekeeper.Keeper
-	DocregKeeper  docregmodulekeeper.Keeper
+	sm                 *module.SimulationManager
+	PramaanKeeper      pramaanmodulekeeper.Keeper
+	DocregKeeper       docregmodulekeeper.Keeper
+	ValidatorregKeeper validatorregmodulekeeper.Keeper
 }
 
 func init() {
@@ -184,6 +186,7 @@ func New(
 		&app.ParamsKeeper,
 		&app.PramaanKeeper,
 		&app.DocregKeeper,
+		&app.ValidatorregKeeper,
 	); err != nil {
 		panic(err)
 	}

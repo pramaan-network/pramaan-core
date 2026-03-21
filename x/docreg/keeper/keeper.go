@@ -3,10 +3,11 @@ package keeper
 import (
 	"fmt"
 	"pramaan/x/docreg/types"
-	errorsmod "cosmossdk.io/errors"
+
 	"cosmossdk.io/collections"
 	"cosmossdk.io/core/address"
 	corestore "cosmossdk.io/core/store"
+	errorsmod "cosmossdk.io/errors"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -17,7 +18,7 @@ type Keeper struct {
 	addressCodec address.Codec
 	authority    []byte
 	Schema       collections.Schema
-	ParamsStore collections.Item[types.Params]
+	ParamsStore  collections.Item[types.Params]
 	bankKeeper   types.BankKeeper
 	Documents    collections.Map[string, types.Document]
 	HashIndex    collections.Map[string, string]
@@ -43,8 +44,8 @@ func NewKeeper(
 		addressCodec: addressCodec,
 		authority:    authority,
 
-		bankKeeper: bankKeeper,
-		ParamsStore:     collections.NewItem(sb, types.ParamsKey, "params", codec.CollValue[types.Params](cdc)),
+		bankKeeper:  bankKeeper,
+		ParamsStore: collections.NewItem(sb, types.ParamsKey, "params", codec.CollValue[types.Params](cdc)),
 		Documents: collections.NewMap(
 			sb,
 			collections.NewPrefix("documents"),

@@ -5,6 +5,8 @@ import (
 	docregmoduletypes "pramaan/x/docreg/types"
 	_ "pramaan/x/pramaan/module"
 	pramaanmoduletypes "pramaan/x/pramaan/types"
+	_ "pramaan/x/validatorreg/module"
+	validatorregmoduletypes "pramaan/x/validatorreg/types"
 	"time"
 
 	runtimev1alpha1 "cosmossdk.io/api/cosmos/app/runtime/v1alpha1"
@@ -126,14 +128,14 @@ var (
 						// ibc modules
 						ibcexported.ModuleName,
 						// chain modules
-						pramaanmoduletypes.ModuleName, docregmoduletypes.ModuleName},
+						pramaanmoduletypes.ModuleName, docregmoduletypes.ModuleName, validatorregmoduletypes.ModuleName},
 					EndBlockers: []string{
 						govtypes.ModuleName,
 						stakingtypes.ModuleName,
 						feegrant.ModuleName,
 						group.ModuleName,
 						// chain modules
-						pramaanmoduletypes.ModuleName, docregmoduletypes.ModuleName},
+						pramaanmoduletypes.ModuleName, docregmoduletypes.ModuleName, validatorregmoduletypes.ModuleName},
 					// The following is mostly only needed when ModuleName != StoreKey name.
 					OverrideStoreKeys: []*runtimev1alpha1.StoreKeyConfig{
 						{
@@ -168,7 +170,7 @@ var (
 						ibctransfertypes.ModuleName,
 						icatypes.ModuleName,
 						// chain modules
-						pramaanmoduletypes.ModuleName, docregmoduletypes.ModuleName},
+						pramaanmoduletypes.ModuleName, docregmoduletypes.ModuleName, validatorregmoduletypes.ModuleName},
 				}),
 			},
 			{
@@ -269,6 +271,9 @@ var (
 			}, {
 				Name:   docregmoduletypes.ModuleName,
 				Config: appconfig.WrapAny(&docregmoduletypes.Module{}),
+			}, {
+				Name:   validatorregmoduletypes.ModuleName,
+				Config: appconfig.WrapAny(&validatorregmoduletypes.Module{}),
 			}},
 	})
 )

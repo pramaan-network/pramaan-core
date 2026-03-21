@@ -3,8 +3,9 @@ package keeper
 import (
 	"context"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"pramaan/x/docreg/types"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 func (k Keeper) GetDocument(goCtx context.Context, req *types.QueryGetDocumentRequest) (*types.QueryGetDocumentResponse, error) {
