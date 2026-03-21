@@ -15,6 +15,8 @@ service Query {
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
     option (google.api.http).get = "/pramaan/validatorreg/v1/params";
   }
+
+  rpc Validators(QueryValidatorsRequest) returns (QueryValidatorsResponse);
 }
 
 // QueryParamsRequest is request type for the Query/Params RPC method.
@@ -27,4 +29,12 @@ message QueryParamsResponse {
     (gogoproto.nullable) = false,
     (amino.dont_omitempty) = true
   ];
+}
+
+// 🔥 REQUEST (empty)
+message QueryValidatorsRequest {}
+
+// 🔥 RESPONSE
+message QueryValidatorsResponse {
+  repeated string validators = 1;
 }
