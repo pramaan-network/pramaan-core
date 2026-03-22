@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package pramaan.docreg.v1;
+package pramaan.docreg;
 
 import "amino/amino.proto";
 import "cosmos/msg/v1/msg.proto";

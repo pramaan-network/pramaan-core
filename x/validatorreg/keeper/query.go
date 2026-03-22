@@ -39,3 +39,4 @@ func (k queryServer) Validators(goCtx context.Context, req *types.QueryValidator
 		Validators: list,
 	}, nil
 }
+

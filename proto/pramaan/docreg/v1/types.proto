@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package pramaan.docreg;
+
+option go_package = "pramaan/x/docreg/types";
+
+message StringList {
+  repeated string items = 1;
+}

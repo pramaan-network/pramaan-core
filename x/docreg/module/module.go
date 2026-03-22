@@ -12,17 +12,15 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
-	"google.golang.org/grpc"
 
 	"pramaan/x/docreg/keeper"
 	"pramaan/x/docreg/types"
 )
 
-var (
+var ( 
 	_ module.AppModuleBasic = (*AppModule)(nil)
-	_ module.AppModule      = (*AppModule)(nil)
-	_ module.HasGenesis     = (*AppModule)(nil)
-
+	_ module.AppModule = (*AppModule)(nil)
+	
 	_ appmodule.AppModule       = (*AppModule)(nil)
 	_ appmodule.HasBeginBlocker = (*AppModule)(nil)
 	_ appmodule.HasEndBlocker   = (*AppModule)(nil)
@@ -62,7 +60,11 @@ func (AppModule) Name() string {
 func (AppModule) RegisterLegacyAminoCodec(*codec.LegacyAmino) {}
 
 // RegisterGRPCGatewayRoutes registers the gRPC Gateway routes for the module.
-func (AppModule) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *runtime.ServeMux) {}
+func (am AppModule) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *runtime.ServeMux) {
+    if err := types.RegisterQueryHandlerClient(context.Background(), mux, types.NewQueryClient(clientCtx)); err != nil {
+        panic(err)
+    }
+}
 
 // RegisterInterfaces registers a module's interface types and their concrete implementations as proto.Message.
 func (AppModule) RegisterInterfaces(registrar codectypes.InterfaceRegistry) {
@@ -70,10 +72,9 @@ func (AppModule) RegisterInterfaces(registrar codectypes.InterfaceRegistry) {
 }
 
 // RegisterServices registers a gRPC query service to respond to the module-specific gRPC queries
-func (am AppModule) RegisterServices(registrar grpc.ServiceRegistrar) error {
-	types.RegisterMsgServer(registrar, keeper.NewMsgServerImpl(am.keeper))
-	types.RegisterQueryServer(registrar, am.keeper)
-	return nil
+func (am AppModule) RegisterServices(cfg module.Configurator) {
+    types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
+    types.RegisterQueryServer(cfg.QueryServer(), keeper.NewQueryServerImpl(am.keeper))
 }
 
 // DefaultGenesis returns a default GenesisState for the module, marshalled to json.RawMessage.
@@ -81,7 +82,7 @@ func (am AppModule) RegisterServices(registrar grpc.ServiceRegistrar) error {
 func (am AppModule) DefaultGenesis(codec.JSONCodec) json.RawMessage {
 	return am.cdc.MustMarshalJSON(types.DefaultGenesis())
 }
-
+ 
 // ValidateGenesis used to validate the GenesisState, given in its json.RawMessage form.
 func (am AppModule) ValidateGenesis(_ codec.JSONCodec, _ client.TxEncodingConfig, bz json.RawMessage) error {
 	var genState types.GenesisState

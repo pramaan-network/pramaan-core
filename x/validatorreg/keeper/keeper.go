@@ -24,6 +24,8 @@ type Keeper struct {
 	Validators collections.Map[string, bool]
 
 	Admin string
+
+	
 }
 
 func NewKeeper(
@@ -44,7 +46,7 @@ func NewKeeper(
 		cdc:          cdc,
 		addressCodec: addressCodec,
 		authority:    authority,
-		Admin: "cosmos1q5s38cczpjpnwcmc8hzyjg92kz2xdnnd3dwl7r",
+		Admin: "cosmos1fvhmctqcrh2pmdxhzxuf4ln9xdcgj3hxny3cx2",
 
 		Params: collections.NewItem(
 			sb,

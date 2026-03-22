@@ -59,5 +59,8 @@ func ProvideModule(in ModuleInputs) ModuleOutputs {
 	)
 	m := NewAppModule(in.Cdc, k, in.AuthKeeper, in.BankKeeper)
 
-	return ModuleOutputs{DocregKeeper: k, Module: m}
+	return ModuleOutputs{
+		DocregKeeper: k,
+		Module:       m,
+	}
 }
