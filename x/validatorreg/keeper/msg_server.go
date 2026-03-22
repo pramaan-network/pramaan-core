@@ -6,12 +6,16 @@ import (
 
 type msgServer struct {
 	Keeper
+	pramaanKeeper types.PramaanKeeper
 }
 
-// NewMsgServerImpl returns an implementation of the MsgServer interface
-// for the provided Keeper.
-func NewMsgServerImpl(keeper Keeper) types.MsgServer {
-	return &msgServer{Keeper: keeper}
+// ✅ MUST return POINTER
+func NewMsgServerImpl(keeper Keeper, pk types.PramaanKeeper) types.MsgServer {
+	return &msgServer{
+		Keeper:         keeper,
+		pramaanKeeper:  pk,
+	}
 }
 
-var _ types.MsgServer = msgServer{}
+// ✅ MUST be POINTER (CRITICAL FIX)
+var _ types.MsgServer = &msgServer{}

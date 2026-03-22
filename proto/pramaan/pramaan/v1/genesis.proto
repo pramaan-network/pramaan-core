@@ -4,6 +4,7 @@ package pramaan.pramaan.v1;
 import "amino/amino.proto";
 import "gogoproto/gogo.proto";
 import "pramaan/pramaan/v1/params.proto";
+import "pramaan/pramaan/v1/types.proto"; // ✅ ADD THIS
 
 option go_package = "pramaan/x/pramaan/types";
 
@@ -14,4 +15,8 @@ message GenesisState {
     (gogoproto.nullable) = false,
     (amino.dont_omitempty) = true
   ];
+
+  // 🔥 NEW FIELDS
+  repeated Authority authorities = 2;
+  uint64 threshold = 3;
 }

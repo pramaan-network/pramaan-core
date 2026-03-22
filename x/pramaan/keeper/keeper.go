@@ -9,6 +9,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"pramaan/x/pramaan/types"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 type Keeper struct {
@@ -21,6 +23,9 @@ type Keeper struct {
 
 	Schema collections.Schema
 	Params collections.Item[types.Params]
+
+	Authorities collections.Map[string, types.Authority]
+	Threshold   collections.Item[uint64]
 }
 
 func NewKeeper(
@@ -28,8 +33,8 @@ func NewKeeper(
 	cdc codec.Codec,
 	addressCodec address.Codec,
 	authority []byte,
-
 ) Keeper {
+
 	if _, err := addressCodec.BytesToString(authority); err != nil {
 		panic(fmt.Sprintf("invalid authority address %s: %s", authority, err))
 	}
@@ -42,7 +47,27 @@ func NewKeeper(
 		addressCodec: addressCodec,
 		authority:    authority,
 
-		Params: collections.NewItem(sb, types.ParamsKey, "params", codec.CollValue[types.Params](cdc)),
+		Params: collections.NewItem(
+			sb,
+			types.ParamsKey,
+			"params",
+			codec.CollValue[types.Params](cdc),
+		),
+
+		Authorities: collections.NewMap(
+			sb,
+			collections.NewPrefix("authorities"),
+			"authorities",
+			collections.StringKey,
+			codec.CollValue[types.Authority](cdc),
+		),
+
+		Threshold: collections.NewItem(
+			sb,
+			collections.NewPrefix("threshold"),
+			"threshold",
+			collections.Uint64Value,
+		),
 	}
 
 	schema, err := sb.Build()
@@ -54,7 +79,47 @@ func NewKeeper(
 	return k
 }
 
-// GetAuthority returns the module's authority.
 func (k Keeper) GetAuthority() []byte {
 	return k.authority
+}
+
+// ==============================
+// 🔐 AUTHORITY FUNCTIONS
+// ==============================
+
+// Add Authority
+func (k Keeper) AddAuthority(ctx sdk.Context, addr string) error {
+	auth := types.Authority{
+		Address: addr,
+		Active:  true,
+	}
+	return k.Authorities.Set(ctx, addr, auth)
+}
+
+// Remove Authority
+func (k Keeper) RemoveAuthority(ctx sdk.Context, addr string) error {
+	return k.Authorities.Remove(ctx, addr)
+}
+
+// Check Authority
+func (k Keeper) IsAuthority(ctx sdk.Context, addr string) bool {
+	has, err := k.Authorities.Has(ctx, addr)
+	if err != nil {
+		return false
+	}
+	return has
+}
+
+// Set Threshold
+func (k Keeper) SetThreshold(ctx sdk.Context, t uint64) error {
+	return k.Threshold.Set(ctx, t)
+}
+
+// Get Threshold
+func (k Keeper) GetThreshold(ctx sdk.Context) uint64 {
+	t, err := k.Threshold.Get(ctx)
+	if err != nil {
+		return 1 // default fallback
+	}
+	return t
 }

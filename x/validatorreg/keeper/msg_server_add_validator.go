@@ -8,20 +8,24 @@ import (
 	"pramaan/x/validatorreg/types"
 )
 
-func (k msgServer) AddValidator(goCtx context.Context, msg *types.MsgAddValidator) (*types.MsgAddValidatorResponse, error) {
+func (k msgServer) AddValidator(
+	goCtx context.Context,
+	msg *types.MsgAddValidator,
+) (*types.MsgAddValidatorResponse, error) {
+
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// 🔒 ADMIN CHECK (CRITICAL)
-	if msg.Creator != k.Keeper.Admin {
-		return nil, errorsmod.Wrap(types.ErrInvalidSigner, "only admin can add validator")
+	// 🔥 NEW AUTHORITY CHECK (MULTI-AUTHORITY)
+	if !k.pramaanKeeper.IsAuthority(ctx, msg.Creator) {
+		return nil, errorsmod.Wrap(types.ErrInvalidSigner, "only authority can add validator")
 	}
 
-	// 🚫 Already exists
+	// 🚫 ALREADY EXISTS
 	if k.Keeper.IsValidator(ctx, msg.Address) {
 		return nil, errorsmod.Wrap(types.ErrInvalidSigner, "validator already exists")
 	}
 
-	// ✅ Add
+	// ✅ ADD VALIDATOR
 	if err := k.Keeper.AddValidator(ctx, msg.Address); err != nil {
 		return nil, err
 	}

@@ -35,6 +35,9 @@ type ModuleInputs struct {
 
 	AuthKeeper types.AuthKeeper
 	BankKeeper types.BankKeeper
+
+	// 🔥 ADD THIS
+	PramaanKeeper types.PramaanKeeper
 }
 
 type ModuleOutputs struct {
@@ -45,18 +48,31 @@ type ModuleOutputs struct {
 }
 
 func ProvideModule(in ModuleInputs) ModuleOutputs {
-	// default to governance authority if not provided
+
+	// default authority (will not be used after your changes, but keep safe)
 	authority := authtypes.NewModuleAddress(types.GovModuleName)
 	if in.Config.Authority != "" {
 		authority = authtypes.NewModuleAddressOrBech32Address(in.Config.Authority)
 	}
+
 	k := keeper.NewKeeper(
 		in.StoreService,
 		in.Cdc,
 		in.AddressCodec,
 		authority,
 	)
-	m := NewAppModule(in.Cdc, k, in.AuthKeeper, in.BankKeeper)
 
-	return ModuleOutputs{ValidatorregKeeper: k, Module: m}
+	// 🔥 FIXED: PASS PRAMAAN KEEPER
+	m := NewAppModule(
+		in.Cdc,
+		k,
+		in.AuthKeeper,
+		in.BankKeeper,
+		in.PramaanKeeper,
+	)
+
+	return ModuleOutputs{
+		ValidatorregKeeper: k,
+		Module:             m,
+	}
 }

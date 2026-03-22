@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package pramaan.pramaan.v1;
+
+option go_package = "pramaan/x/pramaan/types";
+
+// ==============================
+// AUTHORITY MODEL
+// ==============================
+
+message Authority {
+  string address = 1;
+  bool active = 2;
+}

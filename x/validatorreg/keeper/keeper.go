@@ -22,10 +22,6 @@ type Keeper struct {
 	Params collections.Item[types.Params]
 
 	Validators collections.Map[string, bool]
-
-	Admin string
-
-	
 }
 
 func NewKeeper(
@@ -46,22 +42,12 @@ func NewKeeper(
 		cdc:          cdc,
 		addressCodec: addressCodec,
 		authority:    authority,
-		Admin: "cosmos1fvhmctqcrh2pmdxhzxuf4ln9xdcgj3hxny3cx2",
 
 		Params: collections.NewItem(
 			sb,
 			types.ParamsKey,
 			"params",
 			codec.CollValue[types.Params](cdc),
-		),
-
-		// ✅ FIXED: inside struct
-		Validators: collections.NewMap(
-			sb,
-			collections.NewPrefix("validators"),
-			"validators",
-			collections.StringKey,
-			collections.BoolValue,
 		),
 	}
 

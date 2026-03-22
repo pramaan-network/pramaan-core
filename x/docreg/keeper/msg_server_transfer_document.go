@@ -9,24 +9,69 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-func (k msgServer) TransferDocument(goCtx context.Context, msg *types.MsgTransferDocument) (*types.MsgTransferDocumentResponse, error) {
+func (k msgServer) TransferDocument(
+	goCtx context.Context,
+	msg *types.MsgTransferDocument,
+) (*types.MsgTransferDocumentResponse, error) {
+
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// 1. Get document
+	// 🔹 Get existing document
 	doc, found := k.Keeper.GetDocumentByID(ctx, msg.Id)
 	if !found {
 		return nil, errorsmod.Wrapf(types.ErrDocumentAlreadyExists, "document not found")
 	}
 
-	// 2. 🔥 ENFORCE TOKEN RULE
-	if !doc.Transferable {
-		return nil, errorsmod.Wrapf(types.ErrDocumentAlreadyExists, "this document is non-transferable (SBT)")
+	// 🔹 Check ownership
+	if doc.Owner != msg.Creator {
+		return nil, errorsmod.Wrapf(types.ErrInvalidSigner, "not document owner")
 	}
 
-	// 3. Update owner
-	doc.Owner = msg.NewOwner
+	// 🔹 Check transferability
+	if !doc.Transferable {
+		return nil, errorsmod.Wrapf(types.ErrInvalidSigner, "document is non-transferable (SBT)")
+	}
 
-	// 4. Save updated document
+	oldOwner := doc.Owner
+	newOwner := msg.NewOwner
+
+	// ==============================
+	// 🔥 REMOVE FROM OLD OWNER INDEX
+	// ==============================
+
+	oldList, err := k.Keeper.OwnerIndex.Get(ctx, oldOwner)
+	if err == nil {
+		var updated []string
+		for _, id := range oldList.Items {
+			if id != doc.Id {
+				updated = append(updated, id)
+			}
+		}
+		oldList.Items = updated
+		_ = k.Keeper.OwnerIndex.Set(ctx, oldOwner, oldList)
+	}
+
+	// ==============================
+	// 🔥 ADD TO NEW OWNER INDEX
+	// ==============================
+
+	newList, err := k.Keeper.OwnerIndex.Get(ctx, newOwner)
+	if err != nil {
+		newList = types.StringList{Items: []string{}}
+	}
+
+	newList.Items = append(newList.Items, doc.Id)
+
+	if err := k.Keeper.OwnerIndex.Set(ctx, newOwner, newList); err != nil {
+		return nil, err
+	}
+
+	// ==============================
+	// 🔥 UPDATE DOCUMENT
+	// ==============================
+
+	doc.Owner = newOwner
+
 	if err := k.Keeper.Documents.Set(ctx, doc.Id, doc); err != nil {
 		return nil, err
 	}
