@@ -3,9 +3,10 @@ package keeper
 import (
 	"context"
 
+	"pramaan/x/validatorreg/types"
+
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"pramaan/x/validatorreg/types"
 )
 
 func (k msgServer) RemoveValidator(

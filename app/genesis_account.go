@@ -10,7 +10,7 @@ import (
 var _ authtypes.GenesisAccount = (*GenesisAccount)(nil)
 
 // GenesisAccount defines a type that implements the GenesisAccount interface
-// to be used for simulation accounts in the genesis state.
+// to be used for simulation accounts in the genesis st ate.
 type GenesisAccount struct {
 	*authtypes.BaseAccount
 

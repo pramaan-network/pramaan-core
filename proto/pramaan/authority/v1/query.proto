@@ -1,22 +1,20 @@
 syntax = "proto3";
-package pramaan.validatorreg.v1;
+package pramaan.authority.v1;
 
 import "amino/amino.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
-import "pramaan/validatorreg/v1/params.proto";
+import "pramaan/authority/v1/params.proto";
 
-option go_package = "pramaan/x/validatorreg/types";
+option go_package = "pramaan/x/authority/types";
 
 // Query defines the gRPC querier service.
 service Query {
   // Parameters queries the parameters of the module.
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
-    option (google.api.http).get = "/pramaan/validatorreg/v1/params";
+    option (google.api.http).get = "/pramaan/authority/v1/params";
   }
-
-  rpc Validators(QueryValidatorsRequest) returns (QueryValidatorsResponse);
 }
 
 // QueryParamsRequest is request type for the Query/Params RPC method.
@@ -29,12 +27,4 @@ message QueryParamsResponse {
     (gogoproto.nullable) = false,
     (amino.dont_omitempty) = true
   ];
-}
-
-// 🔥 REQUEST (empty)
-message QueryValidatorsRequest {}
-
-// 🔥 RESPONSE
-message QueryValidatorsResponse {
-  repeated string validators = 1;
 }

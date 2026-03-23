@@ -2,9 +2,10 @@ package keeper
 
 import (
 	"context"
+	"pramaan/x/docreg/types"
+
 	"cosmossdk.io/collections"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"pramaan/x/docreg/types"
 )
 
 type queryServer struct {
@@ -159,14 +160,14 @@ func (q *queryServer) QueryDocuments(
 		}
 		defer iter.Close()
 
-for ; iter.Valid(); iter.Next() {
-	doc, err := iter.Value()
-	if err != nil {
-		return nil, err
-	}
-	d := doc
-	docs = append(docs, &d)
-}
+		for ; iter.Valid(); iter.Next() {
+			doc, err := iter.Value()
+			if err != nil {
+				return nil, err
+			}
+			d := doc
+			docs = append(docs, &d)
+		}
 
 		// apply filters later
 		goto FILTER

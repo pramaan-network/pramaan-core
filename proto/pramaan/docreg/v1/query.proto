@@ -2,15 +2,14 @@ syntax = "proto3";
 
 package pramaan.docreg;
 
+import "google/api/annotations.proto";
 import "pramaan/docreg/v1/params.proto";
 import "pramaan/docreg/v1/tx.proto";
-import "google/api/annotations.proto";
 
 option go_package = "pramaan/x/docreg/types";
 
 // Query service
 service Query {
-
   rpc GetDocument(QueryGetDocumentRequest) returns (QueryGetDocumentResponse) {
     option (google.api.http).get = "/pramaan/docreg/v1/document/{id}";
   }
@@ -23,23 +22,17 @@ service Query {
     option (google.api.http).get = "/pramaan/docreg/v1/documents-by-owner/{owner}";
   }
 
-  rpc DocumentsByIssuer(QueryDocumentsByIssuerRequest)
-  returns (QueryDocumentsByIssuerResponse) {
-  option (google.api.http).get =
-    "/pramaan/docreg/v1/documents-by-issuer/{issuer}";
-}
+  rpc DocumentsByIssuer(QueryDocumentsByIssuerRequest) returns (QueryDocumentsByIssuerResponse) {
+    option (google.api.http).get = "/pramaan/docreg/v1/documents-by-issuer/{issuer}";
+  }
 
-rpc GetDocumentByHash(QueryGetDocumentByHashRequest)
-  returns (QueryGetDocumentByHashResponse) {
-  option (google.api.http).get =
-    "/pramaan/docreg/v1/document-by-hash/{hash}";
-}
+  rpc GetDocumentByHash(QueryGetDocumentByHashRequest) returns (QueryGetDocumentByHashResponse) {
+    option (google.api.http).get = "/pramaan/docreg/v1/document-by-hash/{hash}";
+  }
 
-rpc QueryDocuments(QueryDocumentsRequest)
-  returns (QueryDocumentsResponse) {
-  option (google.api.http).get =
-    "/pramaan/docreg/v1/documents";
-}
+  rpc QueryDocuments(QueryDocumentsRequest) returns (QueryDocumentsResponse) {
+    option (google.api.http).get = "/pramaan/docreg/v1/documents";
+  }
 }
 
 // --------------------

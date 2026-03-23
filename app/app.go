@@ -46,6 +46,7 @@ import (
 	ibckeeper "github.com/cosmos/ibc-go/v10/modules/core/keeper"
 
 	"pramaan/docs"
+	authoritymodulekeeper "pramaan/x/authority/keeper"
 	docregmodulekeeper "pramaan/x/docreg/keeper"
 	pramaanmodulekeeper "pramaan/x/pramaan/keeper"
 	validatorregmodulekeeper "pramaan/x/validatorreg/keeper"
@@ -55,7 +56,7 @@ const (
 	// Name is the name of the application.
 	Name = "pramaan"
 	// AccountAddressPrefix is the prefix for accounts addresses.
-	AccountAddressPrefix = "cosmos"
+	AccountAddressPrefix = "pramaan"
 	// ChainCoinType is the coin type of the chain.
 	ChainCoinType = 118
 )
@@ -105,6 +106,7 @@ type App struct {
 	PramaanKeeper      pramaanmodulekeeper.Keeper
 	DocregKeeper       docregmodulekeeper.Keeper
 	ValidatorregKeeper validatorregmodulekeeper.Keeper
+	AuthorityKeeper    authoritymodulekeeper.Keeper
 }
 
 func init() {
@@ -174,7 +176,7 @@ func New(
 		&app.interfaceRegistry,
 		&app.AuthKeeper,
 		&app.BankKeeper,
-		&app.StakingKeeper,
+		&app.StakingKeeper, 
 		&app.SlashingKeeper,
 		&app.MintKeeper,
 		&app.DistrKeeper,
@@ -187,6 +189,7 @@ func New(
 		&app.PramaanKeeper,
 		&app.DocregKeeper,
 		&app.ValidatorregKeeper,
+		&app.AuthorityKeeper,
 	); err != nil {
 		panic(err)
 	}

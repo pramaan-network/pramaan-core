@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package pramaan.authority.v1;
+
+option go_package = "pramaan/x/authority/types";
+
+message Authority {
+  string address = 1;
+  string pub_key = 2;
+  string role = 3;
+}

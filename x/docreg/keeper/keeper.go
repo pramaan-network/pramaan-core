@@ -26,8 +26,8 @@ type Keeper struct {
 	ParamsStore collections.Item[types.Params]
 	bankKeeper  types.BankKeeper
 
-	Documents  collections.Map[string, types.Document]
-	HashIndex  collections.Map[string, string]
+	Documents collections.Map[string, types.Document]
+	HashIndex collections.Map[string, string]
 
 	OwnerIndex  collections.Map[string, types.StringList]
 	IssuerIndex collections.Map[string, types.StringList]
@@ -150,19 +150,19 @@ func (k Keeper) SetDocument(ctx sdk.Context, doc types.Document) error {
 	// 🔥 ISSUER INDEX UPDATE
 	// ==============================
 
-issuerList, err := k.IssuerIndex.Get(ctx, doc.Issuer)
-if err != nil {
-    if !errors.Is(err, collections.ErrNotFound) {
-        return err
-    }
-    issuerList = types.StringList{Items: []string{}}
-}
+	issuerList, err := k.IssuerIndex.Get(ctx, doc.Issuer)
+	if err != nil {
+		if !errors.Is(err, collections.ErrNotFound) {
+			return err
+		}
+		issuerList = types.StringList{Items: []string{}}
+	}
 
-issuerList.Items = append(issuerList.Items, doc.Id)
+	issuerList.Items = append(issuerList.Items, doc.Id)
 
-if err := k.IssuerIndex.Set(ctx, doc.Issuer, issuerList); err != nil {
-    return err
-}
+	if err := k.IssuerIndex.Set(ctx, doc.Issuer, issuerList); err != nil {
+		return err
+	}
 
 	return nil
 }

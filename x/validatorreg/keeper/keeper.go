@@ -22,6 +22,11 @@ type Keeper struct {
 	Params collections.Item[types.Params]
 
 	Validators collections.Map[string, bool]
+<<<<<<< HEAD
+=======
+
+	Admin string
+>>>>>>> 55198ef (Authority Base Layer:)
 }
 
 func NewKeeper(
@@ -42,6 +47,10 @@ func NewKeeper(
 		cdc:          cdc,
 		addressCodec: addressCodec,
 		authority:    authority,
+<<<<<<< HEAD
+=======
+		Admin:        "cosmos1fvhmctqcrh2pmdxhzxuf4ln9xdcgj3hxny3cx2",
+>>>>>>> 55198ef (Authority Base Layer:)
 
 		Params: collections.NewItem(
 			sb,

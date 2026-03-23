@@ -1,6 +1,8 @@
 package app
 
 import (
+	_ "pramaan/x/authority/module"
+	authoritymoduletypes "pramaan/x/authority/types"
 	_ "pramaan/x/docreg/module"
 	docregmoduletypes "pramaan/x/docreg/types"
 	_ "pramaan/x/pramaan/module"
@@ -87,7 +89,7 @@ var (
 		{Account: nft.ModuleName},
 		{Account: ibctransfertypes.ModuleName, Permissions: []string{authtypes.Minter, authtypes.Burner}},
 		{Account: icatypes.ModuleName},
-		{Account: docregmoduletypes.ModuleName, Permissions: []string{authtypes.Minter, authtypes.Burner, authtypes.Staking}}}
+		{Account: docregmoduletypes.ModuleName, Permissions: []string{authtypes.Minter, authtypes.Burner, authtypes.Staking}}, {Account: authoritymoduletypes.ModuleName, Permissions: []string{authtypes.Minter, authtypes.Burner, authtypes.Staking}}}
 
 	// blocked account addresses
 	blockAccAddrs = []string{
@@ -128,14 +130,14 @@ var (
 						// ibc modules
 						ibcexported.ModuleName,
 						// chain modules
-						pramaanmoduletypes.ModuleName, docregmoduletypes.ModuleName, validatorregmoduletypes.ModuleName},
+						pramaanmoduletypes.ModuleName, docregmoduletypes.ModuleName, validatorregmoduletypes.ModuleName, authoritymoduletypes.ModuleName},
 					EndBlockers: []string{
 						govtypes.ModuleName,
 						stakingtypes.ModuleName,
 						feegrant.ModuleName,
 						group.ModuleName,
 						// chain modules
-						pramaanmoduletypes.ModuleName, docregmoduletypes.ModuleName, validatorregmoduletypes.ModuleName},
+						pramaanmoduletypes.ModuleName, docregmoduletypes.ModuleName, validatorregmoduletypes.ModuleName, authoritymoduletypes.ModuleName},
 					// The following is mostly only needed when ModuleName != StoreKey name.
 					OverrideStoreKeys: []*runtimev1alpha1.StoreKeyConfig{
 						{
@@ -170,7 +172,7 @@ var (
 						ibctransfertypes.ModuleName,
 						icatypes.ModuleName,
 						// chain modules
-						pramaanmoduletypes.ModuleName, docregmoduletypes.ModuleName, validatorregmoduletypes.ModuleName},
+						pramaanmoduletypes.ModuleName, docregmoduletypes.ModuleName, validatorregmoduletypes.ModuleName, authoritymoduletypes.ModuleName},
 				}),
 			},
 			{
@@ -274,6 +276,9 @@ var (
 			}, {
 				Name:   validatorregmoduletypes.ModuleName,
 				Config: appconfig.WrapAny(&validatorregmoduletypes.Module{}),
+			}, {
+				Name:   authoritymoduletypes.ModuleName,
+				Config: appconfig.WrapAny(&authoritymoduletypes.Module{}),
 			}},
 	})
 )

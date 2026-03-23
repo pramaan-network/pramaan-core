@@ -1,17 +1,17 @@
 package keeper
 
 import (
-	"pramaan/x/docreg/types"
+	"pramaan/x/authority/types"
 )
 
 type msgServer struct {
 	Keeper
 }
 
-// constructor
+// NewMsgServerImpl returns an implementation of the MsgServer interface
+// for the provided Keeper.
 func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 	return &msgServer{Keeper: keeper}
 }
 
-// interface check
 var _ types.MsgServer = msgServer{}
