@@ -46,7 +46,7 @@ type ModuleOutputs struct {
 
 func ProvideModule(in ModuleInputs) ModuleOutputs {
 	// default to governance authority if not provided
-	authority := authtypes.NewModuleAddress("authority")
+	authority := authtypes.NewModuleAddressOrBech32Address("pramaan1uuqcq729tyt4nhlq59frg4gvlj8urpp0ygcr0v")
 	if in.Config.Authority != "" {
 		authority = authtypes.NewModuleAddressOrBech32Address(in.Config.Authority)
 	}
@@ -57,7 +57,7 @@ func ProvideModule(in ModuleInputs) ModuleOutputs {
 		authority,
 		in.BankKeeper,
 	)
-	m := NewAppModule(in.Cdc, k, in.AuthKeeper, in.BankKeeper)
+	m := NewAppModule(k)
 
 	return ModuleOutputs{AuthorityKeeper: k, Module: m}
 }

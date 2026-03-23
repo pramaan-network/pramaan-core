@@ -7,15 +7,15 @@ func DefaultGenesis() *GenesisState {
 
 		Authorities: []*Authority{
 			{
-				Address: "cosmos1sh954jkt35mpzjnsv6ywq2dgewhjp5de8uq5ft", // gov OR your control wallet
+				Address: "pramaan1kzu8xmf6fkml4jalptj6ed597gnf36qt9vnslv", // gov OR your control wallet
 				Active:  true,
 			},
 						{
-				Address: "cosmos17lnnehn6u663avxm2lcd6f7h3xhtuxrcrat33f", // gov OR your control wallet
+				Address: "pramaan1zt0hnv8y0vpt3jzy5w84fnr5fjjup5zqcllaqq", // gov OR your control wallet
 				Active:  true,
 			},
 						{
-				Address: "cosmos1ycq48wjzxxuecalj7y7ucv2sggt2yfswn3vfzq", // gov OR your control wallet
+				Address: "pramaan1073yvx37dazc74e7xrxwm6zardzcufdnr7m7qm", // gov OR your control wallet
 				Active:  true,
 			},
 		},
