@@ -17,7 +17,7 @@ func (k Keeper) InitGenesis(ctx sdk.Context, genState types.GenesisState) {
 	if len(genState.Authorities) == 0 {
 
 		root := types.Authority{
-			Address: "pramaan1h87h6q8rzr8tlmw2sz3n3tpx6ce6auhnmf0vfg",
+			Address: "pramaan1paaksrjgwgln0yf9ajt24ku7w0nxd0yernzfxu",
 			PubKey:  "genesis-root",
 			Role:    "ROOT",
 		}

@@ -7,6 +7,7 @@ import (
 
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors" 
 )
 
 func (k msgServer) RegisterDocument(goCtx context.Context, msg *types.MsgRegisterDocument) (*types.MsgRegisterDocumentResponse, error) {
@@ -21,6 +22,15 @@ func (k msgServer) RegisterDocument(goCtx context.Context, msg *types.MsgRegiste
 	if k.Keeper.IsHashExists(ctx, msg.Hash) {
 		return nil, errorsmod.Wrapf(types.ErrDocumentAlreadyExists, "hash already registered")
 	}
+
+	auth, found := k.authorityKeeper.GetAuthority(ctx, msg.Issuer)
+if !found {
+	return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "issuer not registered")
+}
+
+if auth.Role != "ISSUER" {
+	return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "not a valid issuer")
+}
 
 	// ✅ CREATE DOCUMENT
 	// 🔥 TOKENIZATION LOGIC

@@ -11,11 +11,12 @@ import (
 
 	"pramaan/x/docreg/keeper"
 	"pramaan/x/docreg/types"
+
+	authoritytypes "pramaan/x/authority/types"
 )
 
 var _ depinject.OnePerModuleType = AppModule{}
 
-// IsOnePerModuleType implements the depinject.OnePerModuleType interface.
 func (AppModule) IsOnePerModuleType() {}
 
 func init() {
@@ -35,6 +36,9 @@ type ModuleInputs struct {
 
 	AuthKeeper types.AuthKeeper
 	BankKeeper types.BankKeeper
+
+	// 🔥 THIS WAS MISSING
+	AuthorityKeeper authoritytypes.AuthorityKeeper
 }
 
 type ModuleOutputs struct {
@@ -45,11 +49,12 @@ type ModuleOutputs struct {
 }
 
 func ProvideModule(in ModuleInputs) ModuleOutputs {
-	// default to governance authority if not provided
-	authority := authtypes.NewModuleAddress(types.GovModuleName)
+
+	authority := authtypes.NewModuleAddress(types.ModuleName)
 	if in.Config.Authority != "" {
 		authority = authtypes.NewModuleAddressOrBech32Address(in.Config.Authority)
 	}
+
 	k := keeper.NewKeeper(
 		in.StoreService,
 		in.Cdc,
@@ -57,7 +62,14 @@ func ProvideModule(in ModuleInputs) ModuleOutputs {
 		authority,
 		in.BankKeeper,
 	)
-	m := NewAppModule(in.Cdc, k, in.AuthKeeper, in.BankKeeper)
+
+	m := NewAppModule(
+		in.Cdc,
+		k,
+		in.AuthKeeper,
+		in.BankKeeper,
+		in.AuthorityKeeper, // 🔥 CRITICAL FIX
+	)
 
 	return ModuleOutputs{
 		DocregKeeper: k,
