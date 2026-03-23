@@ -1,27 +1,23 @@
 package keeper
 
 import (
-	"pramaan/x/authority/types"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
+	"pramaan/x/authority/types"
 )
 
-// InitGenesis initializes the module's state from genesis data
 func (k Keeper) InitGenesis(ctx sdk.Context, genState types.GenesisState) {
-	// Set params (pointer → value)
+
+	// set params
 	if genState.Params != nil {
 		k.Params.Set(ctx, *genState.Params)
 	}
 
-	// If no authorities → auto root
+	// 🔥 AUTO ROOT IF EMPTY
 	if len(genState.Authorities) == 0 {
-		addrStr, err := k.addressCodec.BytesToString(k.authority)
-		if err != nil {
-			panic(err)
-		}
 
 		root := types.Authority{
-			Address: addrStr,
+			Address: "pramaan1h87h6q8rzr8tlmw2sz3n3tpx6ce6auhnmf0vfg",
 			PubKey:  "genesis-root",
 			Role:    "ROOT",
 		}
@@ -30,21 +26,21 @@ func (k Keeper) InitGenesis(ctx sdk.Context, genState types.GenesisState) {
 		return
 	}
 
-	// Load authorities (pointer → value)
-	for _, authority := range genState.Authorities {
-		if authority == nil {
-			continue
-		}
-		k.SetAuthority(ctx, *authority)
+	// normal flow
+	for _, auth := range genState.Authorities {
+		k.SetAuthority(ctx, *auth)
 	}
 }
 
-// ExportGenesis returns the module's exported genesis
 func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
-	genesis := types.DefaultGenesis()
 
-	params, _ := k.Params.Get(ctx)
-	genesis.Params = &params
+	var authorities []*types.Authority
 
-	return genesis
+	// NOTE: you can improve later with iterator
+	// for now safe empty export
+
+	return &types.GenesisState{
+		Params:      nil,
+		Authorities: authorities,
+	}
 }

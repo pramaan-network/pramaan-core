@@ -1,11 +1,10 @@
 package keeper
 
 import (
-	"fmt"
-
 	"cosmossdk.io/collections"
 	"cosmossdk.io/core/address"
 	corestore "cosmossdk.io/core/store"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -16,12 +15,12 @@ type Keeper struct {
 	storeService corestore.KVStoreService
 	cdc          codec.Codec
 	addressCodec address.Codec
-	authority    []byte
+	authority    []byte // ⚠️ kept for SDK compatibility (NOT USED)
 
 	Schema collections.Schema
 	Params collections.Item[types.Params]
 
-	Validators collections.Map[string, bool]
+	Validators collections.Map[string, bool] // ✅ MUST INIT
 }
 
 func NewKeeper(
@@ -30,10 +29,6 @@ func NewKeeper(
 	addressCodec address.Codec,
 	authority []byte,
 ) Keeper {
-
-	if _, err := addressCodec.BytesToString(authority); err != nil {
-		panic(fmt.Sprintf("invalid authority address %s: %s", authority, err))
-	}
 
 	sb := collections.NewSchemaBuilder(storeService)
 
@@ -49,6 +44,15 @@ func NewKeeper(
 			"params",
 			codec.CollValue[types.Params](cdc),
 		),
+
+		// 🔥 CRITICAL FIX: initialize Validators store
+		Validators: collections.NewMap(
+			sb,
+			types.ValidatorKeyPrefix, // ⚠️ must exist in types/keys.go
+			"validators",
+			collections.StringKey,
+			collections.BoolValue,
+		),
 	}
 
 	schema, err := sb.Build()
@@ -60,7 +64,7 @@ func NewKeeper(
 	return k
 }
 
-// GetAuthority returns the module's authority.
+// GetAuthority returns module authority (NOT USED in your design)
 func (k Keeper) GetAuthority() []byte {
 	return k.authority
 }

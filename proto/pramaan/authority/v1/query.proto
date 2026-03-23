@@ -6,6 +6,7 @@ import "cosmos/base/query/v1beta1/pagination.proto";
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "pramaan/authority/v1/params.proto";
+import "pramaan/authority/v1/authority.proto";
 
 option go_package = "pramaan/x/authority/types";
 
@@ -14,6 +15,15 @@ service Query {
   // Parameters queries the parameters of the module.
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
     option (google.api.http).get = "/pramaan/authority/v1/params";
+  }
+    // Query single authority
+  rpc Authority(QueryGetAuthorityRequest) returns (QueryGetAuthorityResponse) {
+    option (google.api.http).get = "/pramaan/authority/v1/authority/{address}";
+  }
+
+  // Query all authorities
+  rpc Authorities(QueryAllAuthoritiesRequest) returns (QueryAllAuthoritiesResponse) {
+    option (google.api.http).get = "/pramaan/authority/v1/authorities";
   }
 }
 
@@ -27,4 +37,20 @@ message QueryParamsResponse {
     (gogoproto.nullable) = false,
     (amino.dont_omitempty) = true
   ];
+}
+
+// Query single authority
+message QueryGetAuthorityRequest {
+  string address = 1;
+}
+
+message QueryGetAuthorityResponse {
+  Authority authority = 1;
+}
+
+// Query all authorities
+message QueryAllAuthoritiesRequest {}
+
+message QueryAllAuthoritiesResponse {
+  repeated Authority authorities = 1;
 }

@@ -6,8 +6,8 @@ import (
 	"cosmossdk.io/core/store"
 	"cosmossdk.io/depinject"
 	"cosmossdk.io/depinject/appconfig"
+
 	"github.com/cosmos/cosmos-sdk/codec"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	"pramaan/x/validatorreg/keeper"
 	"pramaan/x/validatorreg/types"
@@ -36,7 +36,7 @@ type ModuleInputs struct {
 	AuthKeeper types.AuthKeeper
 	BankKeeper types.BankKeeper
 
-	// 🔥 ADD THIS
+	// 🔥 YOUR AUTHORITY SYSTEM
 	PramaanKeeper types.PramaanKeeper
 }
 
@@ -49,11 +49,8 @@ type ModuleOutputs struct {
 
 func ProvideModule(in ModuleInputs) ModuleOutputs {
 
-	// default authority (will not be used after your changes, but keep safe)
-	authority := authtypes.NewModuleAddress(types.GovModuleName)
-	if in.Config.Authority != "" {
-		authority = authtypes.NewModuleAddressOrBech32Address(in.Config.Authority)
-	}
+	// ⚠️ KEEP EMPTY / NEUTRAL AUTHORITY (NOT USED)
+	authority := []byte{}
 
 	k := keeper.NewKeeper(
 		in.StoreService,
@@ -62,7 +59,7 @@ func ProvideModule(in ModuleInputs) ModuleOutputs {
 		authority,
 	)
 
-	// 🔥 FIXED: PASS PRAMAAN KEEPER
+	// 🔥 PASS PRAMAAN KEEPER (REAL AUTHORITY)
 	m := NewAppModule(
 		in.Cdc,
 		k,

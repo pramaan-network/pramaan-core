@@ -17,3 +17,4 @@ const (
 
 // ParamsKey is the prefix to retrieve all Params
 var ParamsKey = collections.NewPrefix("p_validatorreg")
+var ValidatorKeyPrefix = collections.NewPrefix("validator")

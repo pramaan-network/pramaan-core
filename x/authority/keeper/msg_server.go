@@ -70,5 +70,15 @@ func (k msgServer) AddAuthority(goCtx context.Context, msg *types.MsgAddAuthorit
 	// 6. Store
 	k.Keeper.SetAuthority(ctx, newAuthority)
 
+	// 🔥 7. EMIT EVENT (IMPORTANT)
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			"authority_added",
+			sdk.NewAttribute("address", msg.Address),
+			sdk.NewAttribute("role", msg.Role),
+			sdk.NewAttribute("creator", msg.Creator),
+		),
+	)
+
 	return &types.MsgAddAuthorityResponse{}, nil
 }

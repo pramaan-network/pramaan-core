@@ -16,7 +16,7 @@ func (k msgServer) AddValidator(
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// 🔥 NEW AUTHORITY CHECK (MULTI-AUTHORITY)
+	// 🔥 AUTHORITY CHECK
 	if !k.pramaanKeeper.IsAuthority(ctx, msg.Creator) {
 		return nil, errorsmod.Wrap(types.ErrInvalidSigner, "only authority can add validator")
 	}
@@ -30,6 +30,15 @@ func (k msgServer) AddValidator(
 	if err := k.Keeper.AddValidator(ctx, msg.Address); err != nil {
 		return nil, err
 	}
+
+	// 🔥 EMIT EVENT
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			"validator_added",
+			sdk.NewAttribute("address", msg.Address),
+			sdk.NewAttribute("creator", msg.Creator),
+		),
+	)
 
 	return &types.MsgAddValidatorResponse{}, nil
 }
