@@ -24,16 +24,16 @@ func (k msgServer) RegisterDocument(goCtx context.Context, msg *types.MsgRegiste
 	}
 
 	auth, found := k.authorityKeeper.GetAuthority(ctx, msg.Issuer)
-if !found {
-	return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "issuer not registered")
-}
+	if !found {
+		return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "issuer not registered")
+	}
 
-if auth.Role != "ISSUER" {
-	return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "not a valid issuer")
-}
+	if auth.Role != "ISSUER" {
+		return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "not a valid issuer")
+	}
 
-	// ✅ CREATE DOCUMENT
-	// 🔥 TOKENIZATION LOGIC
+	// CREATE DOCUMENT
+	// TOKENIZATION LOGIC
 	tokenType := "SBT"
 	transferable := false
 
@@ -55,10 +55,22 @@ if auth.Role != "ISSUER" {
 		Transferable: transferable,
 	}
 
-	// ✅ STORE
+	// STORE
 	if err := k.Keeper.SetDocument(ctx, doc); err != nil {
 		return nil, err
 	}
+
+	ctx.EventManager().EmitEvent(
+	sdk.NewEvent(
+		"document_registered",
+		sdk.NewAttribute("id", doc.Id),
+		sdk.NewAttribute("hash", doc.Hash),
+		sdk.NewAttribute("issuer", doc.Issuer),
+		sdk.NewAttribute("owner", doc.Owner),
+		sdk.NewAttribute("type", doc.Type),
+		sdk.NewAttribute("creator", msg.Issuer),
+	),
+	)
 
 	return &types.MsgRegisterDocumentResponse{}, nil
 }

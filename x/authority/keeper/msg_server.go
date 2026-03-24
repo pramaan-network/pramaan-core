@@ -72,12 +72,13 @@ func (k msgServer) AddAuthority(goCtx context.Context, msg *types.MsgAddAuthorit
 
 	// 🔥 7. EMIT EVENT (IMPORTANT)
 	ctx.EventManager().EmitEvent(
-		sdk.NewEvent(
-			"authority_added",
-			sdk.NewAttribute("address", msg.Address),
-			sdk.NewAttribute("role", msg.Role),
-			sdk.NewAttribute("creator", msg.Creator),
-		),
+	sdk.NewEvent(
+		"authority_added",
+		sdk.NewAttribute("address", msg.Address),
+		sdk.NewAttribute("role", msg.Role),
+		sdk.NewAttribute("creator", msg.Creator),
+		sdk.NewAttribute("module", "authority"),
+	),
 	)
 
 	return &types.MsgAddAuthorityResponse{}, nil

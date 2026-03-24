@@ -36,5 +36,13 @@ func (k msgServer) RemoveValidator(
 		return nil, err
 	}
 
+	ctx.EventManager().EmitEvent(
+	sdk.NewEvent(
+		"validator_removed",
+		sdk.NewAttribute("address", msg.Address),
+		sdk.NewAttribute("creator", msg.Creator),
+	),
+	)
+
 	return &types.MsgRemoveValidatorResponse{}, nil
 }
