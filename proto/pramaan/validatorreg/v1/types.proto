@@ -9,3 +9,12 @@ message Validator {
   bool active = 2;
   string domain = 3;
 }
+
+message ValidatorProposal {
+  uint64 id = 1;
+  string applicant = 2;
+  string domain = 3;
+  string data = 4; // json (KYB future)
+  repeated string approvals = 5;
+  string status = 6; // PENDING / APPROVED
+}

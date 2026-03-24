@@ -38,21 +38,25 @@ func (k msgServer) AddAuthority(goCtx context.Context, msg *types.MsgAddAuthorit
 	}
 
 	// 3. Role-based validation
-	switch msg.Role {
+switch msg.Role {
 
-	case "VALIDATOR":
-		if creatorAuth.Role != "ROOT" {
-			return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "only ROOT can add VALIDATOR")
-		}
-
-	case "ISSUER":
-		if creatorAuth.Role != "VALIDATOR" {
-			return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "only VALIDATOR can add ISSUER")
-		}
-
-	default:
-		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "invalid role")
+case "AUTHORITY":
+	if creatorAuth.Role != "ROOT" {
+		return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "only ROOT can add AUTHORITY")
 	}
+
+case "VALIDATOR":
+	// ❌ Validators must NOT be created manually
+	return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "validators cannot be added manually (use proposal system)")
+
+case "ISSUER":
+	if creatorAuth.Role != "VALIDATOR" {
+		return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "only VALIDATOR can add ISSUER")
+	}
+
+default:
+	return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "invalid role")
+}
 
 	// 4. Check if already exists
 	_, exists := k.Keeper.GetAuthority(ctx, msg.Address)

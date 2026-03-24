@@ -21,6 +21,9 @@ type Keeper struct {
 	Params collections.Item[types.Params]
 
 	Validators collections.Map[string, types.Validator]
+
+	Proposals collections.Map[uint64, types.ValidatorProposal]
+	ProposalCount collections.Item[uint64]
 }
 
 func NewKeeper(
@@ -53,6 +56,22 @@ func NewKeeper(
 			collections.StringKey,
 			codec.CollValue[types.Validator](cdc),
 		),
+
+		Proposals: collections.NewMap(
+	sb,
+	collections.NewPrefix(1),
+	"proposals",
+	collections.Uint64Key,
+	codec.CollValue[types.ValidatorProposal](cdc),
+),
+
+ProposalCount: collections.NewItem(
+	sb,
+	collections.NewPrefix(2),
+	"proposal_count",
+	collections.Uint64Value,
+),
+	
 	}
 
 	schema, err := sb.Build()

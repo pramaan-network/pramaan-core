@@ -39,3 +39,27 @@ func (k queryServer) Validators(goCtx context.Context, req *types.QueryValidator
 		Validators: list,
 	}, nil
 }
+
+func (k queryServer) Proposals(
+	goCtx context.Context,
+	req *types.QueryProposalsRequest,
+) (*types.QueryProposalsResponse, error) {
+
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	var list []*types.ValidatorProposal
+
+	err := k.k.Proposals.Walk(ctx, nil, func(key uint64, value types.ValidatorProposal) (bool, error) {
+		v := value
+		list = append(list, &v)
+		return false, nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.QueryProposalsResponse{
+		Proposals: list,
+	}, nil
+}

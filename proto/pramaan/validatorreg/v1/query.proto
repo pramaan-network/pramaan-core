@@ -6,6 +6,7 @@ import "cosmos/base/query/v1beta1/pagination.proto";
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "pramaan/validatorreg/v1/params.proto";
+import "pramaan/validatorreg/v1/types.proto";
 
 option go_package = "pramaan/x/validatorreg/types";
 
@@ -17,6 +18,9 @@ service Query {
   }
 
   rpc Validators(QueryValidatorsRequest) returns (QueryValidatorsResponse);
+
+  rpc Proposals(QueryProposalsRequest) returns (QueryProposalsResponse);
+
 }
 
 // QueryParamsRequest is request type for the Query/Params RPC method.
@@ -37,4 +41,10 @@ message QueryValidatorsRequest {}
 // 🔥 RESPONSE
 message QueryValidatorsResponse {
   repeated string validators = 1;
+}
+
+message QueryProposalsRequest {}
+
+message QueryProposalsResponse {
+  repeated ValidatorProposal proposals = 1;
 }
