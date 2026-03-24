@@ -17,8 +17,13 @@ func (k msgServer) AddValidator(
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// 🔥 AUTHORITY CHECK
-	if !k.pramaanKeeper.IsAuthority(ctx, msg.Creator) {
-		return nil, errorsmod.Wrap(types.ErrInvalidSigner, "only authority can add validator")
+	auth, found := k.authorityKeeper.GetAuthority(ctx, msg.Creator)
+	if !found {
+		return nil, errorsmod.Wrap(types.ErrInvalidSigner, "creator not found in authority")
+	}
+
+	if auth.Role != "ROOT" {
+		return nil, errorsmod.Wrap(types.ErrInvalidSigner, "only ROOT can add validator")
 	}
 
 	// 🚫 ALREADY EXISTS
@@ -27,7 +32,7 @@ func (k msgServer) AddValidator(
 	}
 
 	// ✅ ADD VALIDATOR
-	if err := k.Keeper.AddValidator(ctx, msg.Address); err != nil {
+	if err := k.Keeper.AddValidator(ctx, msg.Address, msg.Domain); err != nil {
 		return nil, err
 	}
 

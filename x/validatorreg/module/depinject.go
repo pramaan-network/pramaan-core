@@ -11,6 +11,7 @@ import (
 
 	"pramaan/x/validatorreg/keeper"
 	"pramaan/x/validatorreg/types"
+	authoritytypes "pramaan/x/authority/types"
 )
 
 var _ depinject.OnePerModuleType = AppModule{}
@@ -37,7 +38,8 @@ type ModuleInputs struct {
 	BankKeeper types.BankKeeper
 
 	// 🔥 YOUR AUTHORITY SYSTEM
-	PramaanKeeper types.PramaanKeeper
+	PramaanKeeper  types.PramaanKeeper
+	AuthorityKeeper authoritytypes.AuthorityKeeper
 }
 
 type ModuleOutputs struct {
@@ -66,6 +68,7 @@ func ProvideModule(in ModuleInputs) ModuleOutputs {
 		in.AuthKeeper,
 		in.BankKeeper,
 		in.PramaanKeeper,
+		in.AuthorityKeeper,
 	)
 
 	return ModuleOutputs{

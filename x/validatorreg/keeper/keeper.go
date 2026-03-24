@@ -15,12 +15,12 @@ type Keeper struct {
 	storeService corestore.KVStoreService
 	cdc          codec.Codec
 	addressCodec address.Codec
-	authority    []byte // ⚠️ kept for SDK compatibility (NOT USED)
+	authority    []byte
 
 	Schema collections.Schema
 	Params collections.Item[types.Params]
 
-	Validators collections.Map[string, bool] // ✅ MUST INIT
+	Validators collections.Map[string, types.Validator]
 }
 
 func NewKeeper(
@@ -51,7 +51,7 @@ func NewKeeper(
 			types.ValidatorKeyPrefix, // ⚠️ must exist in types/keys.go
 			"validators",
 			collections.StringKey,
-			collections.BoolValue,
+			codec.CollValue[types.Validator](cdc),
 		),
 	}
 
@@ -70,8 +70,13 @@ func (k Keeper) GetAuthority() []byte {
 }
 
 // ✅ Add Validator
-func (k Keeper) AddValidator(ctx sdk.Context, addr string) error {
-	return k.Validators.Set(ctx, addr, true)
+func (k Keeper) AddValidator(ctx sdk.Context, addr string, domain string) error {
+	val := types.Validator{
+		Address: addr,
+		Active:  true,
+		Domain:  domain,
+	}
+	return k.Validators.Set(ctx, addr, val)
 }
 
 // ✅ Remove Validator
@@ -81,9 +86,9 @@ func (k Keeper) RemoveValidator(ctx sdk.Context, addr string) error {
 
 // ✅ Check Validator
 func (k Keeper) IsValidator(ctx sdk.Context, addr string) bool {
-	has, err := k.Validators.Has(ctx, addr)
+	val, err := k.Validators.Get(ctx, addr)
 	if err != nil {
 		return false
 	}
-	return has
+	return val.Active
 }

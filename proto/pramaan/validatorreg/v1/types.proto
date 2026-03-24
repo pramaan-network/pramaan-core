@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package pramaan.validatorreg.v1;
+
+option go_package = "pramaan/x/validatorreg/types";
+
+message Validator {
+  string address = 1;
+  bool active = 2;
+  string domain = 3;
+}

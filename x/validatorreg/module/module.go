@@ -16,6 +16,7 @@ import (
 
 	"pramaan/x/validatorreg/keeper"
 	"pramaan/x/validatorreg/types"
+	authoritytypes "pramaan/x/authority/types"
 )
 
 var (
@@ -34,7 +35,8 @@ type AppModule struct {
 	keeper         keeper.Keeper
 	authKeeper     types.AuthKeeper
 	bankKeeper     types.BankKeeper
-	pramaanKeeper  types.PramaanKeeper // ✅ NEW
+	pramaanKeeper  types.PramaanKeeper
+	authorityKeeper authoritytypes.AuthorityKeeper
 }
 
 // 🔥 UPDATED CONSTRUCTOR
@@ -43,14 +45,16 @@ func NewAppModule(
 	keeper keeper.Keeper,
 	authKeeper types.AuthKeeper,
 	bankKeeper types.BankKeeper,
-	pramaanKeeper types.PramaanKeeper, // ✅ NEW
+	pramaanKeeper types.PramaanKeeper, 
+	authorityKeeper authoritytypes.AuthorityKeeper,
 ) AppModule {
 	return AppModule{
 		cdc:            cdc,
 		keeper:         keeper,
 		authKeeper:     authKeeper,
 		bankKeeper:     bankKeeper,
-		pramaanKeeper:  pramaanKeeper, // ✅ NEW
+		pramaanKeeper:  pramaanKeeper,
+		authorityKeeper: authorityKeeper,
 	}
 }
 
@@ -77,7 +81,7 @@ func (am AppModule) RegisterServices(registrar grpc.ServiceRegistrar) error {
 
 	types.RegisterMsgServer(
 		registrar,
-		keeper.NewMsgServerImpl(am.keeper, am.pramaanKeeper),
+		keeper.NewMsgServerImpl(am.keeper, am.pramaanKeeper, am.authorityKeeper),
 	)
 
 	types.RegisterQueryServer(registrar, keeper.NewQueryServerImpl(am.keeper))

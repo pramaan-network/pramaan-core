@@ -24,8 +24,8 @@ func (k queryServer) Validators(goCtx context.Context, req *types.QueryValidator
 
 	var list []string
 
-	err := k.k.Validators.Walk(ctx, nil, func(key string, value bool) (bool, error) {
-		if value {
+	err := k.k.Validators.Walk(ctx, nil, func(key string, value types.Validator) (bool, error) {
+		if value.Active {
 			list = append(list, key)
 		}
 		return false, nil
