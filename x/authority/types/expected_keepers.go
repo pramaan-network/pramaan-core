@@ -26,4 +26,5 @@ type ParamSubspace interface {
 
 type AuthorityKeeper interface {
 	GetAuthority(ctx sdk.Context, address string) (Authority, bool)
+	SetAuthority(ctx sdk.Context, authority Authority)
 }

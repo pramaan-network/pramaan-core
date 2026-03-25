@@ -160,6 +160,13 @@ func (k msgServer) ActivateValidator(
 		return nil, err
 	}
 	
+	newAuthority := authoritytypes.Authority{
+	Address: proposal.Applicant,
+	PubKey:  "validator", // temp (can improve later)
+	Role:    "VALIDATOR",
+	}
+
+	k.authorityKeeper.SetAuthority(ctx, newAuthority)
 
 	// 🔹 5. mark proposal as used
 	proposal.Status = "ACTIVATED"
