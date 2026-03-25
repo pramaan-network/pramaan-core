@@ -2,7 +2,7 @@ package keeper
 
 import (
 	"fmt"
-
+	 sdk "github.com/cosmos/cosmos-sdk/types"
 	"cosmossdk.io/collections"
 	"cosmossdk.io/core/address"
 	corestore "cosmossdk.io/core/store"
@@ -80,3 +80,10 @@ func (k Keeper) GetAuthority() []byte {
 	return k.authority
 }
 
+func (k Keeper) GetIssuer(ctx sdk.Context, address string) (types.Issuer, error) {
+	issuer, err := k.Issuers.Get(ctx, address)
+	if err != nil {
+		return types.Issuer{}, fmt.Errorf("issuer not found")
+	}
+	return issuer, nil
+}

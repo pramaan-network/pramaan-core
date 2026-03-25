@@ -5,6 +5,7 @@ import (
 
 	"cosmossdk.io/core/address"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	issuertypes "pramaan/x/issuer/types"
 )
 
 // AuthKeeper defines the expected interface for the Auth module.
@@ -24,4 +25,8 @@ type BankKeeper interface {
 type ParamSubspace interface {
 	Get(context.Context, []byte, interface{})
 	Set(context.Context, []byte, interface{})
+}
+
+type IssuerKeeper interface {
+	GetIssuer(ctx sdk.Context, address string) (issuertypes.Issuer, error)
 }

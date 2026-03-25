@@ -18,22 +18,39 @@ func (k msgServer) RegisterDocument(goCtx context.Context, msg *types.MsgRegiste
 		return nil, errorsmod.Wrapf(types.ErrDocumentAlreadyExists, "missing required fields")
 	}
 
-	// 🔥 DUPLICATE CHECK (EARLY REJECTION)
+	// 🔥 DUPLICATE CHECK
 	if k.Keeper.IsHashExists(ctx, msg.Hash) {
 		return nil, errorsmod.Wrapf(types.ErrDocumentAlreadyExists, "hash already registered")
 	}
 
-	auth, found := k.authorityKeeper.GetAuthority(ctx, msg.Issuer)
-	if !found {
-		return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "issuer not registered")
+	// =====================================================
+	// 🔐 NEW: STRICT ISSUER VALIDATION (CORE FIX)
+	// =====================================================
+
+	issuer, err := k.issuerKeeper.GetIssuer(ctx, msg.Issuer)
+	if err != nil {
+		return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "issuer not registered in issuer module")
 	}
 
-	if auth.Role != "ISSUER" {
-		return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "not a valid issuer")
+	// must be active
+	if !issuer.Active {
+		return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "issuer is not active")
 	}
 
-	// CREATE DOCUMENT
-	// TOKENIZATION LOGIC
+	// must match signer
+	if msg.Issuer != msg.Creator {
+		return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "creator must be issuer")
+	}
+
+	// 🔥 DOMAIN ENFORCEMENT (YOUR RULE)
+	if issuer.Domain != msg.DocType {
+		return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "issuer domain does not match document type")
+	}
+
+	// =====================================================
+	// TOKENIZATION LOGIC (TEMP)
+	// =====================================================
+
 	tokenType := "SBT"
 	transferable := false
 
@@ -41,6 +58,10 @@ func (k msgServer) RegisterDocument(goCtx context.Context, msg *types.MsgRegiste
 		tokenType = "NFT"
 		transferable = true
 	}
+
+	// =====================================================
+	// CREATE DOCUMENT
+	// =====================================================
 
 	doc := types.Document{
 		Id:           msg.Id,

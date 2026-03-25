@@ -37,8 +37,9 @@ type ModuleInputs struct {
 	AuthKeeper types.AuthKeeper
 	BankKeeper types.BankKeeper
 
-	// 🔥 THIS WAS MISSING
 	AuthorityKeeper authoritytypes.AuthorityKeeper
+
+	IssuerKeeper types.IssuerKeeper 
 }
 
 type ModuleOutputs struct {
@@ -68,7 +69,8 @@ func ProvideModule(in ModuleInputs) ModuleOutputs {
 		k,
 		in.AuthKeeper,
 		in.BankKeeper,
-		in.AuthorityKeeper, // 🔥 CRITICAL FIX
+		in.AuthorityKeeper,
+		in.IssuerKeeper, 
 	)
 
 	return ModuleOutputs{

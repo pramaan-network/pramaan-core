@@ -24,6 +24,7 @@ type AppModule struct {
 	authKeeper      types.AuthKeeper
 	bankKeeper      types.BankKeeper
 	authorityKeeper authoritytypes.AuthorityKeeper
+	issuerKeeper    types.IssuerKeeper
 }
 
 func NewAppModule(
@@ -32,6 +33,7 @@ func NewAppModule(
 	authKeeper types.AuthKeeper,
 	bankKeeper types.BankKeeper,
 	authorityKeeper authoritytypes.AuthorityKeeper,
+	issuerKeeper types.IssuerKeeper, 
 ) AppModule {
 	return AppModule{
 		cdc:             cdc,
@@ -39,6 +41,7 @@ func NewAppModule(
 		authKeeper:      authKeeper,
 		bankKeeper:      bankKeeper,
 		authorityKeeper: authorityKeeper,
+		issuerKeeper:    issuerKeeper,
 	}
 }
 
@@ -63,7 +66,11 @@ func (AppModule) RegisterInterfaces(registrar codectypes.InterfaceRegistry) {
 func (am AppModule) RegisterServices(cfg module.Configurator) {
 	types.RegisterMsgServer(
 		cfg.MsgServer(),
-		keeper.NewMsgServerImpl(am.keeper, am.authorityKeeper),
+		keeper.NewMsgServerImpl(
+			am.keeper,
+			am.authorityKeeper,
+			am.issuerKeeper, // ✅ ADD THIS
+		),
 	)
 
 	types.RegisterQueryServer(cfg.QueryServer(), keeper.NewQueryServerImpl(am.keeper))
