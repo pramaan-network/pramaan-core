@@ -1,17 +1,18 @@
 package keeper
 
 import (
-	"fmt"
 	"context"
+	"fmt"
+
+	authoritytypes "pramaan/x/authority/types"
+	"pramaan/x/validatorreg/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"pramaan/x/validatorreg/types"
-	authoritytypes "pramaan/x/authority/types"
 )
 
 type msgServer struct {
 	Keeper
-	pramaanKeeper types.PramaanKeeper
+	pramaanKeeper   types.PramaanKeeper
 	authorityKeeper authoritytypes.AuthorityKeeper
 }
 
@@ -22,8 +23,8 @@ func NewMsgServerImpl(
 	authorityKeeper authoritytypes.AuthorityKeeper,
 ) types.MsgServer {
 	return &msgServer{
-		Keeper: keeper,
-		pramaanKeeper: pramaanKeeper,
+		Keeper:          keeper,
+		pramaanKeeper:   pramaanKeeper,
 		authorityKeeper: authorityKeeper,
 	}
 }
@@ -90,8 +91,8 @@ func (k msgServer) ApproveValidator(
 	}
 
 	if auth.Role != "AUTHORITY" {
-	return nil, fmt.Errorf("only AUTHORITY can approve")
-}
+		return nil, fmt.Errorf("only AUTHORITY can approve")
+	}
 
 	// 🔹 2. get proposal
 	proposal, err := k.Keeper.Proposals.Get(ctx, msg.ProposalId)
@@ -159,11 +160,11 @@ func (k msgServer) ActivateValidator(
 	if err != nil {
 		return nil, err
 	}
-	
+
 	newAuthority := authoritytypes.Authority{
-	Address: proposal.Applicant,
-	PubKey:  "validator", // temp (can improve later)
-	Role:    "VALIDATOR",
+		Address: proposal.Applicant,
+		PubKey:  "validator", // temp (can improve later)
+		Role:    "VALIDATOR",
 	}
 
 	k.authorityKeeper.SetAuthority(ctx, newAuthority)
@@ -188,4 +189,3 @@ func (k msgServer) ActivateValidator(
 }
 
 var _ types.MsgServer = &msgServer{}
- 

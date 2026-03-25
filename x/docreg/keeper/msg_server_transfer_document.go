@@ -77,14 +77,14 @@ func (k msgServer) TransferDocument(
 	}
 
 	ctx.EventManager().EmitEvent(
-	sdk.NewEvent(
-		"document_transferred",
-		sdk.NewAttribute("id", doc.Id),
-		sdk.NewAttribute("from", oldOwner),
-		sdk.NewAttribute("to", newOwner),
-		sdk.NewAttribute("type", doc.Type),
-		sdk.NewAttribute("creator", msg.Creator),
-	),
+		sdk.NewEvent(
+			"document_transferred",
+			sdk.NewAttribute("id", doc.Id),
+			sdk.NewAttribute("from", oldOwner),
+			sdk.NewAttribute("to", newOwner),
+			sdk.NewAttribute("type", doc.Type),
+			sdk.NewAttribute("creator", msg.Creator),
+		),
 	)
 
 	return &types.MsgTransferDocumentResponse{}, nil

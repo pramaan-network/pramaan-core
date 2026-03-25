@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package pramaan.issuer.v1;
+
+option go_package = "pramaan/x/issuer/types";
+
+// ==============================
+// ISSUER MODEL
+// ==============================
+
+message Issuer {
+  string id = 1;
+  string address = 2;
+  string validator = 3;
+  string domain = 4;
+  bool active = 5;
+}

@@ -7,7 +7,7 @@ import (
 
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors" 
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 func (k msgServer) RegisterDocument(goCtx context.Context, msg *types.MsgRegisterDocument) (*types.MsgRegisterDocumentResponse, error) {
@@ -61,15 +61,15 @@ func (k msgServer) RegisterDocument(goCtx context.Context, msg *types.MsgRegiste
 	}
 
 	ctx.EventManager().EmitEvent(
-	sdk.NewEvent(
-		"document_registered",
-		sdk.NewAttribute("id", doc.Id),
-		sdk.NewAttribute("hash", doc.Hash),
-		sdk.NewAttribute("issuer", doc.Issuer),
-		sdk.NewAttribute("owner", doc.Owner),
-		sdk.NewAttribute("type", doc.Type),
-		sdk.NewAttribute("creator", msg.Issuer),
-	),
+		sdk.NewEvent(
+			"document_registered",
+			sdk.NewAttribute("id", doc.Id),
+			sdk.NewAttribute("hash", doc.Hash),
+			sdk.NewAttribute("issuer", doc.Issuer),
+			sdk.NewAttribute("owner", doc.Owner),
+			sdk.NewAttribute("type", doc.Type),
+			sdk.NewAttribute("creator", msg.Issuer),
+		),
 	)
 
 	return &types.MsgRegisterDocumentResponse{}, nil

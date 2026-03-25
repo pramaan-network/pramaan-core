@@ -20,7 +20,6 @@ service Query {
   rpc Validators(QueryValidatorsRequest) returns (QueryValidatorsResponse);
 
   rpc Proposals(QueryProposalsRequest) returns (QueryProposalsResponse);
-
 }
 
 // QueryParamsRequest is request type for the Query/Params RPC method.

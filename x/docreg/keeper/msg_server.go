@@ -1,8 +1,8 @@
 package keeper
 
 import (
-	"pramaan/x/docreg/types"
 	authoritytypes "pramaan/x/authority/types"
+	"pramaan/x/docreg/types"
 )
 
 type msgServer struct {

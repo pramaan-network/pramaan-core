@@ -69,7 +69,6 @@ message MsgRemoveValidator {
 // MsgRemoveValidatorResponse defines the MsgRemoveValidatorResponse message.
 message MsgRemoveValidatorResponse {}
 
-
 message MsgApplyValidator {
   option (cosmos.msg.v1.signer) = "creator";
 

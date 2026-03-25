@@ -48,6 +48,7 @@ import (
 	"pramaan/docs"
 	authoritymodulekeeper "pramaan/x/authority/keeper"
 	docregmodulekeeper "pramaan/x/docreg/keeper"
+	issuermodulekeeper "pramaan/x/issuer/keeper"
 	pramaanmodulekeeper "pramaan/x/pramaan/keeper"
 	validatorregmodulekeeper "pramaan/x/validatorreg/keeper"
 )
@@ -107,6 +108,7 @@ type App struct {
 	DocregKeeper       docregmodulekeeper.Keeper
 	ValidatorregKeeper validatorregmodulekeeper.Keeper
 	AuthorityKeeper    authoritymodulekeeper.Keeper
+	IssuerKeeper       issuermodulekeeper.Keeper
 }
 
 func init() {
@@ -176,7 +178,7 @@ func New(
 		&app.interfaceRegistry,
 		&app.AuthKeeper,
 		&app.BankKeeper,
-		&app.StakingKeeper, 
+		&app.StakingKeeper,
 		&app.SlashingKeeper,
 		&app.MintKeeper,
 		&app.DistrKeeper,
@@ -190,6 +192,7 @@ func New(
 		&app.DocregKeeper,
 		&app.ValidatorregKeeper,
 		&app.AuthorityKeeper,
+		&app.IssuerKeeper,
 	); err != nil {
 		panic(err)
 	}

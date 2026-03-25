@@ -9,9 +9,9 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 
+	authoritytypes "pramaan/x/authority/types"
 	"pramaan/x/validatorreg/keeper"
 	"pramaan/x/validatorreg/types"
-	authoritytypes "pramaan/x/authority/types"
 )
 
 var _ depinject.OnePerModuleType = AppModule{}
@@ -38,7 +38,7 @@ type ModuleInputs struct {
 	BankKeeper types.BankKeeper
 
 	// 🔥 YOUR AUTHORITY SYSTEM
-	PramaanKeeper  types.PramaanKeeper
+	PramaanKeeper   types.PramaanKeeper
 	AuthorityKeeper authoritytypes.AuthorityKeeper
 }
 

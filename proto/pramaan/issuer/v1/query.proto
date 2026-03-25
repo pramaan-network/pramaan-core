@@ -1,0 +1,60 @@
+syntax = "proto3";
+package pramaan.issuer.v1;
+
+import "amino/amino.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "pramaan/issuer/v1/params.proto";
+import "pramaan/issuer/v1/types.proto";
+
+option go_package = "pramaan/x/issuer/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  // Parameters queries the parameters of the module.
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/pramaan/issuer/v1/params";
+  }
+
+  // ==============================
+// GET ISSUER
+// ==============================
+rpc GetIssuer(QueryGetIssuerRequest) returns (QueryGetIssuerResponse) {
+  option (google.api.http).get = "/pramaan/issuer/v1/issuer/{address}";
+}
+
+// ==============================
+// LIST ISSUERS
+// ==============================
+rpc Issuers(QueryIssuersRequest) returns (QueryIssuersResponse) {
+  option (google.api.http).get = "/pramaan/issuer/v1/issuers";
+}
+}
+
+// QueryParamsRequest is request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is response type for the Query/Params RPC method.
+message QueryParamsResponse {
+  // params holds all the parameters of this module.
+  Params params = 1 [
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
+}
+
+
+message QueryGetIssuerRequest {
+  string address = 1;
+}
+
+message QueryGetIssuerResponse {
+  Issuer issuer = 1;
+}
+
+message QueryIssuersRequest {}
+
+message QueryIssuersResponse {
+  repeated Issuer issuers = 1;
+}

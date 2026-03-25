@@ -8,11 +8,11 @@ import (
 	"pramaan/x/authority/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 )
 
 // --------------------
@@ -66,8 +66,8 @@ func (am AppModule) Name() string {
 }
 
 func (am AppModule) RegisterServices(cfg module.Configurator) {
-types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
-types.RegisterQueryServer(cfg.QueryServer(), keeper.NewQueryServerImpl(am.keeper))
+	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
+	types.RegisterQueryServer(cfg.QueryServer(), keeper.NewQueryServerImpl(am.keeper))
 }
 
 func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.RawMessage) {

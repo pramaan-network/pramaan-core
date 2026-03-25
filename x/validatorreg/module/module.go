@@ -14,9 +14,9 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"google.golang.org/grpc"
 
+	authoritytypes "pramaan/x/authority/types"
 	"pramaan/x/validatorreg/keeper"
 	"pramaan/x/validatorreg/types"
-	authoritytypes "pramaan/x/authority/types"
 )
 
 var (
@@ -31,11 +31,11 @@ var (
 
 // 🔥 UPDATED STRUCT
 type AppModule struct {
-	cdc            codec.Codec
-	keeper         keeper.Keeper
-	authKeeper     types.AuthKeeper
-	bankKeeper     types.BankKeeper
-	pramaanKeeper  types.PramaanKeeper
+	cdc             codec.Codec
+	keeper          keeper.Keeper
+	authKeeper      types.AuthKeeper
+	bankKeeper      types.BankKeeper
+	pramaanKeeper   types.PramaanKeeper
 	authorityKeeper authoritytypes.AuthorityKeeper
 }
 
@@ -45,15 +45,15 @@ func NewAppModule(
 	keeper keeper.Keeper,
 	authKeeper types.AuthKeeper,
 	bankKeeper types.BankKeeper,
-	pramaanKeeper types.PramaanKeeper, 
+	pramaanKeeper types.PramaanKeeper,
 	authorityKeeper authoritytypes.AuthorityKeeper,
 ) AppModule {
 	return AppModule{
-		cdc:            cdc,
-		keeper:         keeper,
-		authKeeper:     authKeeper,
-		bankKeeper:     bankKeeper,
-		pramaanKeeper:  pramaanKeeper,
+		cdc:             cdc,
+		keeper:          keeper,
+		authKeeper:      authKeeper,
+		bankKeeper:      bankKeeper,
+		pramaanKeeper:   pramaanKeeper,
 		authorityKeeper: authorityKeeper,
 	}
 }

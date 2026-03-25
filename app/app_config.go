@@ -5,6 +5,8 @@ import (
 	authoritymoduletypes "pramaan/x/authority/types"
 	_ "pramaan/x/docreg/module"
 	docregmoduletypes "pramaan/x/docreg/types"
+	_ "pramaan/x/issuer/module"
+	issuermoduletypes "pramaan/x/issuer/types"
 	_ "pramaan/x/pramaan/module"
 	pramaanmoduletypes "pramaan/x/pramaan/types"
 	_ "pramaan/x/validatorreg/module"
@@ -130,14 +132,14 @@ var (
 						// ibc modules
 						ibcexported.ModuleName,
 						// chain modules
-						pramaanmoduletypes.ModuleName, docregmoduletypes.ModuleName, validatorregmoduletypes.ModuleName, authoritymoduletypes.ModuleName},
+						pramaanmoduletypes.ModuleName, docregmoduletypes.ModuleName, validatorregmoduletypes.ModuleName, authoritymoduletypes.ModuleName, issuermoduletypes.ModuleName},
 					EndBlockers: []string{
 						govtypes.ModuleName,
 						stakingtypes.ModuleName,
 						feegrant.ModuleName,
 						group.ModuleName,
 						// chain modules
-						pramaanmoduletypes.ModuleName, docregmoduletypes.ModuleName, validatorregmoduletypes.ModuleName, authoritymoduletypes.ModuleName},
+						pramaanmoduletypes.ModuleName, docregmoduletypes.ModuleName, validatorregmoduletypes.ModuleName, authoritymoduletypes.ModuleName, issuermoduletypes.ModuleName},
 					// The following is mostly only needed when ModuleName != StoreKey name.
 					OverrideStoreKeys: []*runtimev1alpha1.StoreKeyConfig{
 						{
@@ -172,7 +174,7 @@ var (
 						ibctransfertypes.ModuleName,
 						icatypes.ModuleName,
 						// chain modules
-						pramaanmoduletypes.ModuleName, docregmoduletypes.ModuleName, validatorregmoduletypes.ModuleName, authoritymoduletypes.ModuleName},
+						pramaanmoduletypes.ModuleName, docregmoduletypes.ModuleName, validatorregmoduletypes.ModuleName, authoritymoduletypes.ModuleName, issuermoduletypes.ModuleName},
 				}),
 			},
 			{
@@ -279,6 +281,9 @@ var (
 			}, {
 				Name:   authoritymoduletypes.ModuleName,
 				Config: appconfig.WrapAny(&authoritymoduletypes.Module{}),
+			}, {
+				Name:   issuermoduletypes.ModuleName,
+				Config: appconfig.WrapAny(&issuermoduletypes.Module{}),
 			}},
 	})
 )
