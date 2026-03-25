@@ -1,6 +1,7 @@
 package keeper
 
 import (
+	"fmt"
 	"context"
 
 	"pramaan/x/docreg/types"
@@ -82,14 +83,23 @@ func (k msgServer) RegisterDocument(goCtx context.Context, msg *types.MsgRegiste
 	}
 
 	ctx.EventManager().EmitEvent(
-		sdk.NewEvent(
-			"document_registered",
-			sdk.NewAttribute("id", doc.Id),
-			sdk.NewAttribute("hash", doc.Hash),
-			sdk.NewAttribute("issuer", doc.Issuer),
-			sdk.NewAttribute("owner", doc.Owner),
-			sdk.NewAttribute("type", doc.Type),
-			sdk.NewAttribute("creator", msg.Issuer),
+	sdk.NewEvent(
+		"docreg.document_registered",
+
+		sdk.NewAttribute("doc_id", doc.Id),
+		sdk.NewAttribute("hash", doc.Hash),
+
+		sdk.NewAttribute("issuer", doc.Issuer),
+		sdk.NewAttribute("owner", doc.Owner),
+
+		sdk.NewAttribute("doc_type", doc.Type),
+		sdk.NewAttribute("domain", issuer.Domain),
+
+		sdk.NewAttribute("token_type", doc.TokenType),
+		sdk.NewAttribute("transferable", fmt.Sprintf("%t", doc.Transferable)),
+
+		sdk.NewAttribute("timestamp", fmt.Sprintf("%d", doc.Timestamp)),
+		sdk.NewAttribute("creator", msg.Creator),
 		),
 	)
 

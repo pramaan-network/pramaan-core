@@ -36,6 +36,23 @@ func (k msgServer) ApplyValidator(
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	// ==============================
+	// 🔥 0. PREVENT DUPLICATE APPLY
+	// ==============================
+	err := k.Keeper.Proposals.Walk(ctx, nil, func(id uint64, p types.ValidatorProposal) (bool, error) {
+
+		// same applicant already has pending/approved proposal
+		if p.Applicant == msg.Creator && (p.Status == "PENDING" || p.Status == "APPROVED") {
+			return true, fmt.Errorf("validator already has active proposal")
+		}
+
+		return false, nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
 	// 🔹 1. get current proposal count
 	count, err := k.Keeper.ProposalCount.Get(ctx)
 	if err != nil {
@@ -66,11 +83,15 @@ func (k msgServer) ApplyValidator(
 
 	// 🔹 5. emit event
 	ctx.EventManager().EmitEvent(
-		sdk.NewEvent(
-			"validator_proposal_created",
-			sdk.NewAttribute("id", fmt.Sprintf("%d", newID)),
-			sdk.NewAttribute("applicant", msg.Creator),
-			sdk.NewAttribute("domain", msg.Domain),
+	sdk.NewEvent(
+		"validatorreg.proposal_created",
+
+		sdk.NewAttribute("proposal_id", fmt.Sprintf("%d", newID)),
+		sdk.NewAttribute("applicant", msg.Creator),
+		sdk.NewAttribute("domain", msg.Domain),
+
+		sdk.NewAttribute("status", "PENDING"),
+		sdk.NewAttribute("creator", msg.Creator),
 		),
 	)
 
@@ -122,10 +143,14 @@ func (k msgServer) ApproveValidator(
 
 	// 🔹 7. emit event
 	ctx.EventManager().EmitEvent(
-		sdk.NewEvent(
-			"validator_approved",
-			sdk.NewAttribute("proposal_id", fmt.Sprintf("%d", msg.ProposalId)),
-			sdk.NewAttribute("approver", msg.Creator),
+	sdk.NewEvent(
+		"validatorreg.proposal_approved",
+
+		sdk.NewAttribute("proposal_id", fmt.Sprintf("%d", msg.ProposalId)),
+		sdk.NewAttribute("approver", msg.Creator),
+
+		sdk.NewAttribute("total_approvals", fmt.Sprintf("%d", len(proposal.Approvals))),
+		sdk.NewAttribute("status", proposal.Status),
 		),
 	)
 
@@ -177,11 +202,14 @@ func (k msgServer) ActivateValidator(
 
 	// 🔹 6. emit event
 	ctx.EventManager().EmitEvent(
-		sdk.NewEvent(
-			"validator_activated",
-			sdk.NewAttribute("address", proposal.Applicant),
-			sdk.NewAttribute("domain", proposal.Domain),
-			sdk.NewAttribute("proposal_id", fmt.Sprintf("%d", msg.ProposalId)),
+	sdk.NewEvent(
+		"validatorreg.validator_activated",
+
+		sdk.NewAttribute("validator", proposal.Applicant),
+		sdk.NewAttribute("domain", proposal.Domain),
+		sdk.NewAttribute("proposal_id", fmt.Sprintf("%d", msg.ProposalId)),
+
+		sdk.NewAttribute("status", "ACTIVE"),
 		),
 	)
 

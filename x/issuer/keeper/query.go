@@ -11,7 +11,6 @@ import (
 var _ types.QueryServer = queryServer{}
 
 // NewQueryServerImpl returns an implementation of the QueryServer interface
-// for the provided Keeper.
 func NewQueryServerImpl(k Keeper) types.QueryServer {
 	return queryServer{k}
 }
@@ -19,6 +18,10 @@ func NewQueryServerImpl(k Keeper) types.QueryServer {
 type queryServer struct {
 	k Keeper
 }
+
+// ==============================
+// GET ISSUER
+// ==============================
 
 func (k queryServer) GetIssuer(
 	goCtx context.Context,
@@ -36,6 +39,10 @@ func (k queryServer) GetIssuer(
 		Issuer: &issuer,
 	}, nil
 }
+
+// ==============================
+// LIST ISSUERS
+// ==============================
 
 func (k queryServer) Issuers(
 	goCtx context.Context,
