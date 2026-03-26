@@ -45,6 +45,7 @@ message MsgAddAuthority {
   string address = 2 [(cosmos_proto.scalar) = "cosmos.AddressString"];
   string pub_key = 3;
   string role = 4;
+  string metadata = 5;
 }
 
 message MsgAddAuthorityResponse {}

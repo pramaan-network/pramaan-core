@@ -84,15 +84,24 @@ func (k msgServer) ApplyValidator(
 	// 🔹 5. emit event
 	ctx.EventManager().EmitEvent(
 	sdk.NewEvent(
-		"validatorreg.proposal_created",
+		"validator.proposal.created",
+
+		sdk.NewAttribute("module", "validatorreg"),
+		sdk.NewAttribute("action", "create_proposal"),
 
 		sdk.NewAttribute("proposal_id", fmt.Sprintf("%d", newID)),
 		sdk.NewAttribute("applicant", msg.Creator),
 		sdk.NewAttribute("domain", msg.Domain),
 
 		sdk.NewAttribute("status", "PENDING"),
-		sdk.NewAttribute("creator", msg.Creator),
-		),
+
+		// 🔥 ENGINE SUPPORT
+		sdk.NewAttribute("metadata", msg.Data),
+
+		// 🔥 AUDIT
+		sdk.NewAttribute("block_time", ctx.BlockTime().String()),
+		sdk.NewAttribute("height", fmt.Sprintf("%d", ctx.BlockHeight())),
+	),
 	)
 
 	return &types.MsgApplyValidatorResponse{}, nil
@@ -144,14 +153,21 @@ func (k msgServer) ApproveValidator(
 	// 🔹 7. emit event
 	ctx.EventManager().EmitEvent(
 	sdk.NewEvent(
-		"validatorreg.proposal_approved",
+		"validator.proposal.approved",
+
+		sdk.NewAttribute("module", "validatorreg"),
+		sdk.NewAttribute("action", "approve"),
 
 		sdk.NewAttribute("proposal_id", fmt.Sprintf("%d", msg.ProposalId)),
 		sdk.NewAttribute("approver", msg.Creator),
 
 		sdk.NewAttribute("total_approvals", fmt.Sprintf("%d", len(proposal.Approvals))),
 		sdk.NewAttribute("status", proposal.Status),
-		),
+
+		// 🔥 AUDIT
+		sdk.NewAttribute("block_time", ctx.BlockTime().String()),
+		sdk.NewAttribute("height", fmt.Sprintf("%d", ctx.BlockHeight())),
+	),
 	)
 
 	return &types.MsgApproveValidatorResponse{}, nil
@@ -203,15 +219,22 @@ func (k msgServer) ActivateValidator(
 	// 🔹 6. emit event
 	ctx.EventManager().EmitEvent(
 	sdk.NewEvent(
-		"validatorreg.validator_activated",
+		"validator.activated",
+
+		sdk.NewAttribute("module", "validatorreg"),
+		sdk.NewAttribute("action", "activate"),
 
 		sdk.NewAttribute("validator", proposal.Applicant),
 		sdk.NewAttribute("domain", proposal.Domain),
 		sdk.NewAttribute("proposal_id", fmt.Sprintf("%d", msg.ProposalId)),
 
 		sdk.NewAttribute("status", "ACTIVE"),
-		),
-	)
+
+		// 🔥 AUDIT
+		sdk.NewAttribute("block_time", ctx.BlockTime().String()),
+		sdk.NewAttribute("height", fmt.Sprintf("%d", ctx.BlockHeight())),
+	),
+	)		
 
 	return &types.MsgActivateValidatorResponse{}, nil
 }

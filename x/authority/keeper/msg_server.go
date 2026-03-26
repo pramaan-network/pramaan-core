@@ -1,6 +1,7 @@
 package keeper
 
 import (
+	"fmt"
 	"context"
 
 	errorsmod "cosmossdk.io/errors"
@@ -23,7 +24,11 @@ func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 var _ types.MsgServer = msgServer{}
 
 // AddAuthority handles adding new authority
-func (k msgServer) AddAuthority(goCtx context.Context, msg *types.MsgAddAuthority) (*types.MsgAddAuthorityResponse, error) {
+func (k msgServer) AddAuthority(
+	goCtx context.Context,
+	msg *types.MsgAddAuthority,
+) (*types.MsgAddAuthorityResponse, error) {
+
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// 1. Get creator authority
@@ -46,8 +51,7 @@ func (k msgServer) AddAuthority(goCtx context.Context, msg *types.MsgAddAuthorit
 		}
 
 	case "VALIDATOR":
-		// ❌ Validators must NOT be created manually
-		return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "validators cannot be added manually (use proposal system)")
+		return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "validators must use proposal system")
 
 	case "ISSUER":
 		if creatorAuth.Role != "VALIDATOR" {
@@ -74,14 +78,27 @@ func (k msgServer) AddAuthority(goCtx context.Context, msg *types.MsgAddAuthorit
 	// 6. Store
 	k.Keeper.SetAuthority(ctx, newAuthority)
 
-	// 🔥 7. EMIT EVENT (IMPORTANT)
+	// =====================================================
+	// 🔥 STANDARDIZED EVENT (ENGINE READY)
+	// =====================================================
+
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
-			"authority_added",
+			"authority.created", // ✅ standardized naming
+
+			sdk.NewAttribute("module", "authority"),
+			sdk.NewAttribute("action", "create"),
+
 			sdk.NewAttribute("address", msg.Address),
 			sdk.NewAttribute("role", msg.Role),
 			sdk.NewAttribute("creator", msg.Creator),
-			sdk.NewAttribute("module", "authority"),
+
+			// 🔥 NEW (GENERIC ENGINE SUPPORT)
+			sdk.NewAttribute("metadata", msg.Metadata),
+
+			// 🔥 AUDIT SUPPORT
+			sdk.NewAttribute("block_time", ctx.BlockTime().String()),
+			sdk.NewAttribute("height", fmt.Sprintf("%d", ctx.BlockHeight())),
 		),
 	)
 

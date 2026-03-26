@@ -84,7 +84,10 @@ func (k msgServer) RegisterDocument(goCtx context.Context, msg *types.MsgRegiste
 
 	ctx.EventManager().EmitEvent(
 	sdk.NewEvent(
-		"docreg.document_registered",
+		"document.registered", // ✅ global standard
+
+		sdk.NewAttribute("module", "docreg"),
+		sdk.NewAttribute("action", "register"),
 
 		sdk.NewAttribute("doc_id", doc.Id),
 		sdk.NewAttribute("hash", doc.Hash),
@@ -98,9 +101,13 @@ func (k msgServer) RegisterDocument(goCtx context.Context, msg *types.MsgRegiste
 		sdk.NewAttribute("token_type", doc.TokenType),
 		sdk.NewAttribute("transferable", fmt.Sprintf("%t", doc.Transferable)),
 
-		sdk.NewAttribute("timestamp", fmt.Sprintf("%d", doc.Timestamp)),
-		sdk.NewAttribute("creator", msg.Creator),
-		),
+		// 🔥 ENGINE SUPPORT
+		sdk.NewAttribute("metadata", msg.Metadata),
+
+		// 🔥 AUDIT
+		sdk.NewAttribute("block_time", ctx.BlockTime().String()),
+		sdk.NewAttribute("height", fmt.Sprintf("%d", ctx.BlockHeight())),
+	),
 	)
 
 	return &types.MsgRegisterDocumentResponse{}, nil
