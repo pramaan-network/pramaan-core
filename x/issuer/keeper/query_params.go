@@ -1,3 +1,4 @@
+// Package keeper (this file) implements the Params query for x/issuer.
 package keeper
 
 import (
@@ -12,6 +13,9 @@ import (
 	"pramaan/x/issuer/types"
 )
 
+// Params handles the QueryParamsRequest gRPC query, returning the module's
+// current on-chain parameters. A not-found params entry is treated as the
+// zero-value Params rather than an error.
 func (q queryServer) Params(ctx context.Context, req *types.QueryParamsRequest) (*types.QueryParamsResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")

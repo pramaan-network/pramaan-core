@@ -1,7 +1,10 @@
+// Package types (this file) defines the x/issuer module's store keys.
 package types
 
 import "cosmossdk.io/collections"
 
+// Module identity constants used to register this module with the SDK's
+// module manager and message/query routers.
 const (
 	// ModuleName defines the module name
 	ModuleName = "issuer"
@@ -17,3 +20,11 @@ const (
 
 // ParamsKey is the prefix to retrieve all Params
 var ParamsKey = collections.NewPrefix("p_issuer")
+
+// Stateless upper bounds on free-form string inputs accepted by the issuer
+// message handlers (state-bloat / DoS guard). Generous for legitimate use,
+// well below anything that threatens node memory/disk.
+const (
+	MaxDomainLen  = 128
+	MaxAddressLen = 128
+)

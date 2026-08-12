@@ -1,3 +1,5 @@
+// Package validatorreg (this file) implements the x/validatorreg CLI
+// command wiring (autocli).
 package validatorreg
 
 import (
@@ -6,7 +8,12 @@ import (
 	"pramaan/x/validatorreg/types"
 )
 
-// AutoCLIOptions implements the autocli.HasAutoCLIConfig interface.
+// AutoCLIOptions implements the autocli.HasAutoCLIConfig interface. Note
+// the ApplyValidator/ApproveValidator/ActivateValidator proposal-flow
+// messages (see keeper/msg_server.go) have no hand-tuned CLI entries here —
+// only AddValidator/RemoveValidator (the direct, ROOT-only path) and the
+// skipped UpdateParams do. The proposal-flow messages fall back to
+// autocli's default auto-generated commands.
 func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 	return &autocliv1.ModuleOptions{
 		Query: &autocliv1.ServiceCommandDescriptor{

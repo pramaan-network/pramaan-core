@@ -1,3 +1,6 @@
+// Package simulation implements randomized-testing operations for
+// x/validatorreg, used by the Cosmos SDK simulation framework. This file
+// covers MsgAddValidator.
 package simulation
 
 import (
@@ -12,6 +15,8 @@ import (
 	"pramaan/x/validatorreg/types"
 )
 
+// SimulateMsgAddValidator builds a simulation operation for
+// MsgAddValidator. Currently a stub — always a NoOp.
 func SimulateMsgAddValidator(
 	ak types.AuthKeeper,
 	bk types.BankKeeper,

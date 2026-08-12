@@ -1,3 +1,5 @@
+// Package pramaan (this file) implements the x/pramaan CLI command wiring
+// (autocli).
 package pramaan
 
 import (

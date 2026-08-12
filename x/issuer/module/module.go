@@ -1,3 +1,8 @@
+// Package issuer wires the x/issuer module (the registry of document
+// issuers — VALIDATOR-created, domain-scoped accounts authorized to call
+// docreg's RegisterDocument) into the Cosmos SDK's module.AppModule
+// lifecycle. The state-machine logic itself lives in x/issuer/keeper; this
+// file is glue between that keeper and the SDK's module system.
 package issuer
 
 import (

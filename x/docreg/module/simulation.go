@@ -1,3 +1,5 @@
+// Package docreg (this file) implements the module.AppModuleSimulation
+// hooks used by the Cosmos SDK's randomized simulation testing framework.
 package docreg
 
 import (
@@ -23,10 +25,15 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(&docregGenesis)
 }
 
-// RegisterStoreDecoder registers a decoder.
+// RegisterStoreDecoder registers a decoder used by the simulation framework
+// to pretty-print raw KV-store diffs for this module. No-op.
 func (am AppModule) RegisterStoreDecoder(_ simtypes.StoreDecoderRegistry) {}
 
-// WeightedOperations returns the all the gov module operations with their respective weights.
+// WeightedOperations returns the randomized message operations (and their
+// relative weights) the simulator can fire against this module: currently
+// RegisterDocument and TransferDocument, both still stub NoOp
+// implementations (see simulation/register_document.go and
+// simulation/transfer_document.go).
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
 	operations := make([]simtypes.WeightedOperation, 0)
 	const (
@@ -63,7 +70,8 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 	return operations
 }
 
-// ProposalMsgs returns msgs used for governance proposals for simulations.
+// ProposalMsgs returns the messages this module contributes to randomized
+// governance-proposal simulation. Empty: none registered.
 func (am AppModule) ProposalMsgs(simState module.SimulationState) []simtypes.WeightedProposalMsg {
 	return []simtypes.WeightedProposalMsg{}
 }

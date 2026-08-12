@@ -1,3 +1,6 @@
+// Package simulation implements randomized-testing operations for x/docreg,
+// used by the Cosmos SDK simulation framework (`go test ./app -run
+// TestFullAppSimulation ...`). This file covers MsgRegisterDocument.
 package simulation
 
 import (
@@ -12,6 +15,10 @@ import (
 	"pramaan/x/docreg/types"
 )
 
+// SimulateMsgRegisterDocument builds a simulation operation for
+// MsgRegisterDocument. Currently a stub: it always returns a NoOp — actual
+// field population (hash/owner/issuer/doc_type) has not been implemented,
+// so this message is never really exercised by the simulator.
 func SimulateMsgRegisterDocument(
 	ak types.AuthKeeper,
 	bk types.BankKeeper,

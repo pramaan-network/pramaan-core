@@ -1,3 +1,6 @@
+// Package docreg (this file) implements the x/docreg CLI command wiring
+// (autocli): what shows up under `pramaand query docreg ...` and
+// `pramaand tx docreg ...`.
 package docreg
 
 import (
@@ -6,7 +9,12 @@ import (
 	"pramaan/x/docreg/types"
 )
 
-// AutoCLIOptions implements the autocli.HasAutoCLIConfig interface.
+// AutoCLIOptions implements the autocli.HasAutoCLIConfig interface,
+// declaring the query commands (params, get-document — note the richer
+// query RPCs like DocumentsByOwner/DocumentsByIssuer/GetDocumentByHash/
+// QueryDocuments are not exposed here, only reachable via gRPC/REST
+// directly) and tx commands (register-document, transfer-document;
+// update-params is skipped since it's authority-gated).
 func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 	return &autocliv1.ModuleOptions{
 		Query: &autocliv1.ServiceCommandDescriptor{

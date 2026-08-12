@@ -1,7 +1,6 @@
 package keeper_test
 
 import (
-	"context"
 	"testing"
 
 	"cosmossdk.io/core/address"
@@ -19,9 +18,10 @@ import (
 )
 
 type fixture struct {
-	ctx          context.Context
+	ctx          sdk.Context
 	keeper       keeper.Keeper
 	addressCodec address.Codec
+	authority    []byte
 }
 
 func initFixture(t *testing.T) *fixture {
@@ -53,5 +53,6 @@ func initFixture(t *testing.T) *fixture {
 		ctx:          ctx,
 		keeper:       k,
 		addressCodec: addressCodec,
+		authority:    authority,
 	}
 }

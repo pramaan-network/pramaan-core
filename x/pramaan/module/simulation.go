@@ -1,3 +1,5 @@
+// Package pramaan (this file) implements the module.AppModuleSimulation
+// hooks used by the Cosmos SDK's randomized simulation testing framework.
 package pramaan
 
 import (
@@ -19,16 +21,20 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(&pramaanGenesis)
 }
 
-// RegisterStoreDecoder registers a decoder.
+// RegisterStoreDecoder registers a decoder used by the simulation framework
+// to pretty-print raw KV-store diffs for this module. No-op.
 func (am AppModule) RegisterStoreDecoder(_ simtypes.StoreDecoderRegistry) {}
 
-// WeightedOperations returns the all the gov module operations with their respective weights.
+// WeightedOperations returns the randomized message operations the
+// simulator can fire against this module. Empty: this module has no
+// simulate-able messages beyond UpdateParams.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
 	operations := make([]simtypes.WeightedOperation, 0)
 	return operations
 }
 
-// ProposalMsgs returns msgs used for governance proposals for simulations.
+// ProposalMsgs returns the messages this module contributes to randomized
+// governance-proposal simulation. Empty: none registered.
 func (am AppModule) ProposalMsgs(simState module.SimulationState) []simtypes.WeightedProposalMsg {
 	return []simtypes.WeightedProposalMsg{}
 }

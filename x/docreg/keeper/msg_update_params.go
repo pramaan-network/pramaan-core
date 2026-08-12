@@ -1,3 +1,6 @@
+// Package keeper (this file) implements the x/docreg MsgUpdateParams
+// handler — a standard gov-gated params update, unlike x/authority's
+// version of the same message, which is unconditionally disabled.
 package keeper
 
 import (
@@ -9,6 +12,9 @@ import (
 	"pramaan/x/docreg/types"
 )
 
+// UpdateParams handles MsgUpdateParams: it requires the signer to match the
+// module's configured authority (the gov module account by default — see
+// module/depinject.go), validates the new Params, and persists them.
 func (k msgServer) UpdateParams(ctx context.Context, req *types.MsgUpdateParams) (*types.MsgUpdateParamsResponse, error) {
 	authority, err := k.addressCodec.StringToBytes(req.Authority)
 	if err != nil {

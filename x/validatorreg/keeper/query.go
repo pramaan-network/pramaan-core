@@ -1,3 +1,6 @@
+// Package keeper (this file) implements the gRPC QueryServer for
+// x/validatorreg: listing active validators and listing all
+// validator-admission proposals.
 package keeper
 
 import (
@@ -11,14 +14,21 @@ import (
 var _ types.QueryServer = queryServer{}
 
 // NewQueryServerImpl returns an implementation of the QueryServer interface
+// backed by the given Keeper.
 func NewQueryServerImpl(k Keeper) types.QueryServer {
 	return queryServer{k}
 }
 
+// queryServer adapts a Keeper to the generated types.QueryServer interface.
 type queryServer struct {
 	k Keeper
 }
 
+// Validators handles the QueryValidatorsRequest gRPC query: returns the
+// addresses of every validator currently marked Active (inactive/removed
+// validators are filtered out, not just omitted from a "removed" list —
+// there is no way to distinguish "never existed" from "removed" via this
+// query alone). Not paginated.
 func (k queryServer) Validators(goCtx context.Context, req *types.QueryValidatorsRequest) (*types.QueryValidatorsResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -40,6 +50,11 @@ func (k queryServer) Validators(goCtx context.Context, req *types.QueryValidator
 	}, nil
 }
 
+// Proposals handles the QueryProposalsRequest gRPC query: returns every
+// validator-admission proposal regardless of status (PENDING/APPROVED/
+// ACTIVATED — there's no REJECTED status yet, see SECURITY_CHANGELOG.md
+// bug #10). Not paginated, and has no status filter — a client wanting
+// only pending proposals must filter client-side.
 func (k queryServer) Proposals(
 	goCtx context.Context,
 	req *types.QueryProposalsRequest,

@@ -1,3 +1,8 @@
+// Package pramaan wires the x/pramaan module — this repo's original base
+// module, now largely superseded by authority/docreg/issuer/validatorreg —
+// into the Cosmos SDK's module.AppModule lifecycle. See types/keys.go and
+// keeper/keeper.go for what still actually lives here (Params, plus a
+// legacy, unused-in-practice Authorities/Threshold subsystem).
 package pramaan
 
 import (
@@ -36,6 +41,7 @@ type AppModule struct {
 	bankKeeper types.BankKeeper
 }
 
+// NewAppModule constructs an AppModule bound to the given keeper.
 func NewAppModule(
 	cdc codec.Codec,
 	keeper keeper.Keeper,

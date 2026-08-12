@@ -1,3 +1,6 @@
+// Package simulation (this file) implements the randomized-testing
+// operation for MsgTransferDocument. See register_document.go for the
+// package-level overview.
 package simulation
 
 import (
@@ -12,6 +15,9 @@ import (
 	"pramaan/x/docreg/types"
 )
 
+// SimulateMsgTransferDocument builds a simulation operation for
+// MsgTransferDocument. Currently a stub — always a NoOp, no real transfer
+// scenario is exercised.
 func SimulateMsgTransferDocument(
 	ak types.AuthKeeper,
 	bk types.BankKeeper,

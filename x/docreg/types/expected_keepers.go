@@ -1,3 +1,7 @@
+// Package types (this file) declares the "expected keeper" interfaces
+// x/docreg depends on: narrow interfaces onto auth/bank/issuer rather than
+// their concrete keeper types, so this module doesn't need to import those
+// packages directly and is easier to unit-test with mocks.
 package types
 
 import (
@@ -27,6 +31,10 @@ type ParamSubspace interface {
 	Set(context.Context, []byte, interface{})
 }
 
+// IssuerKeeper is the interface RegisterDocument uses (see
+// keeper/msg_server_register_document.go) to confirm the message's issuer
+// is a real, active issuer whose registered domain matches the document's
+// declared doc_type before allowing a document to be created.
 type IssuerKeeper interface {
 	GetIssuer(ctx sdk.Context, address string) (issuertypes.Issuer, error)
 }

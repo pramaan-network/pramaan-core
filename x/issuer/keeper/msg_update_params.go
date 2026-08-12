@@ -1,3 +1,5 @@
+// Package keeper (this file) implements the x/issuer MsgUpdateParams
+// handler: a standard gov-gated params update.
 package keeper
 
 import (
@@ -9,6 +11,9 @@ import (
 	"pramaan/x/issuer/types"
 )
 
+// UpdateParams handles MsgUpdateParams: requires the signer to match the
+// module's configured authority (the gov module account by default), then
+// validates and persists the new Params.
 func (k msgServer) UpdateParams(ctx context.Context, req *types.MsgUpdateParams) (*types.MsgUpdateParamsResponse, error) {
 	authority, err := k.addressCodec.StringToBytes(req.Authority)
 	if err != nil {

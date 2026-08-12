@@ -1,3 +1,6 @@
+// Package keeper (this file) implements the x/docreg MsgRegisterDocument
+// handler: creating a new tokenized document record after validating the
+// issuer's identity, active status, and domain match.
 package keeper
 
 import (
@@ -11,21 +14,47 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
+// RegisterDocument handles MsgRegisterDocument. Order of checks: required
+// fields present, content hash not already registered, then issuer
+// validation (issuer exists in x/issuer, is active, matches the message's
+// signer, and its registered domain matches the document's doc_type).
+// DocType additionally determines tokenization: everything defaults to a
+// non-transferable SBT except DocTypeLandProperty, which mints a
+// transferable NFT instead (see types.TokenTypeSBT/TokenTypeNFT).
 func (k msgServer) RegisterDocument(goCtx context.Context, msg *types.MsgRegisterDocument) (*types.MsgRegisterDocumentResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// ✅ BASIC VALIDATION
+	// Basic validation: all four identifying fields are required.
 	if msg.Id == "" || msg.Hash == "" || msg.Owner == "" || msg.Issuer == "" {
-		return nil, errorsmod.Wrapf(types.ErrDocumentAlreadyExists, "missing required fields")
+		return nil, errorsmod.Wrapf(types.ErrInvalidRequest, "id, hash, owner, and issuer are required")
 	}
 
-	// 🔥 DUPLICATE CHECK
+	// Bound free-form inputs before they can be persisted (state-bloat / DoS
+	// guard — see types.Max*Len). Cheap, stateless checks done up front.
+	if len(msg.Id) > types.MaxIDLen {
+		return nil, errorsmod.Wrapf(types.ErrInvalidRequest, "id exceeds max length %d", types.MaxIDLen)
+	}
+	if len(msg.Hash) > types.MaxHashLen {
+		return nil, errorsmod.Wrapf(types.ErrInvalidRequest, "hash exceeds max length %d", types.MaxHashLen)
+	}
+	if len(msg.DocType) > types.MaxDocTypeLen {
+		return nil, errorsmod.Wrapf(types.ErrInvalidRequest, "doc_type exceeds max length %d", types.MaxDocTypeLen)
+	}
+	if len(msg.Owner) > types.MaxAddressLen || len(msg.Issuer) > types.MaxAddressLen {
+		return nil, errorsmod.Wrapf(types.ErrInvalidRequest, "owner/issuer exceeds max length %d", types.MaxAddressLen)
+	}
+	if len(msg.Metadata) > types.MaxMetadataLen {
+		return nil, errorsmod.Wrapf(types.ErrInvalidRequest, "metadata exceeds max length %d", types.MaxMetadataLen)
+	}
+
+	// Duplicate check: reject re-registering the same content hash.
 	if k.Keeper.IsHashExists(ctx, msg.Hash) {
 		return nil, errorsmod.Wrapf(types.ErrDocumentAlreadyExists, "hash already registered")
 	}
 
 	// =====================================================
-	// 🔐 NEW: STRICT ISSUER VALIDATION (CORE FIX)
+	// Strict issuer validation: the message's declared issuer must be a
+	// real, active issuer in x/issuer, and must itself be the signer.
 	// =====================================================
 
 	issuer, err := k.issuerKeeper.GetIssuer(ctx, msg.Issuer)
@@ -38,30 +67,38 @@ func (k msgServer) RegisterDocument(goCtx context.Context, msg *types.MsgRegiste
 		return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "issuer is not active")
 	}
 
-	// must match signer
+	// must match signer — an issuer can only register documents as itself,
+	// not on behalf of another issuer.
 	if msg.Issuer != msg.Creator {
 		return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "creator must be issuer")
 	}
 
-	// 🔥 DOMAIN ENFORCEMENT (YOUR RULE)
+	// Domain enforcement: an issuer registered for one domain (e.g.
+	// "education") cannot issue documents of another doc_type (e.g.
+	// "land_property") — keeps issuer scope enforced at the protocol level
+	// rather than trusting client-side conventions.
 	if issuer.Domain != msg.DocType {
 		return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "issuer domain does not match document type")
 	}
 
 	// =====================================================
-	// TOKENIZATION LOGIC (TEMP)
+	// Tokenization: every doc_type defaults to a non-transferable SBT
+	// except land_property, which is minted as a transferable NFT instead.
+	// Marked TEMP by the original author — likely needs to become a
+	// per-domain/per-issuer configurable rule rather than a single hardcoded
+	// doc_type check if more transferable-asset domains are added later.
 	// =====================================================
 
-	tokenType := "SBT"
+	tokenType := types.TokenTypeSBT
 	transferable := false
 
-	if msg.DocType == "land_property" {
-		tokenType = "NFT"
+	if msg.DocType == types.DocTypeLandProperty {
+		tokenType = types.TokenTypeNFT
 		transferable = true
 	}
 
 	// =====================================================
-	// CREATE DOCUMENT
+	// Assemble and persist the new document record.
 	// =====================================================
 
 	doc := types.Document{
@@ -70,7 +107,7 @@ func (k msgServer) RegisterDocument(goCtx context.Context, msg *types.MsgRegiste
 		Owner:        msg.Owner,
 		Issuer:       msg.Issuer,
 		Type:         msg.DocType,
-		Status:       "ISSUED",
+		Status:       types.DocumentStatusIssued,
 		Timestamp:    ctx.BlockTime().Unix(),
 		Metadata:     msg.Metadata,
 		TokenType:    tokenType,

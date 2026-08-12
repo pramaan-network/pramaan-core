@@ -1,3 +1,7 @@
+// Package cmd builds the pramaand root cobra command: depinject-based
+// client wiring (codec, tx config, autocli), the IBC modules' manual
+// client-side registration (IBC doesn't support depinject app-wiring yet —
+// see app/ibc.go), and the full command tree assembled in commands.go.
 package cmd
 
 import (
@@ -44,7 +48,8 @@ func NewRootCmd() *cobra.Command {
 
 	rootCmd := &cobra.Command{
 		Use:           app.Name + "d",
-		Short:         "pramaan node",
+		Short:         "PRAMAAN BLOCKCHAIN daemon",
+		Version: "v1.0.0",
 		SilenceErrors: true,
 		PersistentPreRunE: func(cmd *cobra.Command, _ []string) error {
 			// set the default command outputs

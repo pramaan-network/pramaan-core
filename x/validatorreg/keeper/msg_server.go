@@ -1,3 +1,10 @@
+// Package keeper (this file) implements the x/validatorreg
+// AUTHORITY-quorum validator-admission workflow: ApplyValidator (any
+// account proposes itself) -> ApproveValidator (distinct AUTHORITY-role
+// accounts vote, see ValidatorApprovalThreshold below) -> ActivateValidator
+// (the original applicant, once approved, finalizes registration). This is
+// separate from the direct ROOT-only AddValidator/RemoveValidator path in
+// msg_server_add_validator.go/msg_server_remove_validator.go.
 package keeper
 
 import (
@@ -9,6 +16,17 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
+
+// ValidatorApprovalThreshold is the number of distinct AUTHORITY approvals a
+// validator proposal needs before it flips to APPROVED.
+//
+// NOTE: this should really be a governed on-chain param (types.Params) so it can be
+// changed via MsgUpdateParams instead of a binary upgrade. That requires adding a
+// field to the validatorreg Params proto message and regenerating the *.pb.go code
+// (buf/ignite codegen), which isn't available in this environment right now. Tracked
+// as a follow-up; for now this constant is at least a single named, documented place
+// instead of a bare magic number.
+const ValidatorApprovalThreshold = 3
 
 type msgServer struct {
 	Keeper
@@ -36,13 +54,22 @@ func (k msgServer) ApplyValidator(
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	// Bound free-form inputs before persisting a proposal (state-bloat / DoS
+	// guard — see types.Max*Len).
+	if len(msg.Domain) > types.MaxDomainLen {
+		return nil, fmt.Errorf("domain exceeds max length %d", types.MaxDomainLen)
+	}
+	if len(msg.Data) > types.MaxDataLen {
+		return nil, fmt.Errorf("data exceeds max length %d", types.MaxDataLen)
+	}
+
 	// ==============================
 	// 🔥 0. PREVENT DUPLICATE APPLY
 	// ==============================
 	err := k.Keeper.Proposals.Walk(ctx, nil, func(id uint64, p types.ValidatorProposal) (bool, error) {
 
 		// same applicant already has pending/approved proposal
-		if p.Applicant == msg.Creator && (p.Status == "PENDING" || p.Status == "APPROVED") {
+		if p.Applicant == msg.Creator && (p.Status == types.ProposalStatusPending || p.Status == types.ProposalStatusApproved) {
 			return true, fmt.Errorf("validator already has active proposal")
 		}
 
@@ -68,7 +95,7 @@ func (k msgServer) ApplyValidator(
 		Domain:    msg.Domain,
 		Data:      msg.Data,
 		Approvals: []string{},
-		Status:    "PENDING",
+		Status:    types.ProposalStatusPending,
 	}
 
 	// 🔹 3. store proposal
@@ -93,7 +120,7 @@ func (k msgServer) ApplyValidator(
 		sdk.NewAttribute("applicant", msg.Creator),
 		sdk.NewAttribute("domain", msg.Domain),
 
-		sdk.NewAttribute("status", "PENDING"),
+		sdk.NewAttribute("status", types.ProposalStatusPending),
 
 		// 🔥 ENGINE SUPPORT
 		sdk.NewAttribute("metadata", msg.Data),
@@ -120,7 +147,7 @@ func (k msgServer) ApproveValidator(
 		return nil, fmt.Errorf("not an authority")
 	}
 
-	if auth.Role != "AUTHORITY" {
+	if auth.Role != authoritytypes.RoleAuthority {
 		return nil, fmt.Errorf("only AUTHORITY can approve")
 	}
 
@@ -128,6 +155,15 @@ func (k msgServer) ApproveValidator(
 	proposal, err := k.Keeper.Proposals.Get(ctx, msg.ProposalId)
 	if err != nil {
 		return nil, fmt.Errorf("proposal not found")
+	}
+
+	// 🔹 2b. only a still-pending proposal can accept approvals. Without this
+	// guard an AUTHORITY could keep appending approvals to a proposal that is
+	// already APPROVED or ACTIVATED — noise at best, and it leaves the
+	// terminal states mutable, which any later logic keying off Approvals
+	// would have to defend against. Reject anything not PENDING outright.
+	if proposal.Status != types.ProposalStatusPending {
+		return nil, fmt.Errorf("proposal is not pending (status %s)", proposal.Status)
 	}
 
 	// 🔹 3. check already approved
@@ -140,9 +176,9 @@ func (k msgServer) ApproveValidator(
 	// 🔹 4. append approval
 	proposal.Approvals = append(proposal.Approvals, msg.Creator)
 
-	// 🔹 5. threshold check (3)
-	if len(proposal.Approvals) >= 3 && proposal.Status != "APPROVED" {
-		proposal.Status = "APPROVED"
+	// 🔹 5. threshold check
+	if len(proposal.Approvals) >= ValidatorApprovalThreshold && proposal.Status != types.ProposalStatusApproved {
+		proposal.Status = types.ProposalStatusApproved
 	}
 
 	// 🔹 6. save
@@ -187,7 +223,7 @@ func (k msgServer) ActivateValidator(
 	}
 
 	// 🔹 2. must be approved
-	if proposal.Status != "APPROVED" {
+	if proposal.Status != types.ProposalStatusApproved {
 		return nil, fmt.Errorf("proposal not approved")
 	}
 
@@ -205,13 +241,13 @@ func (k msgServer) ActivateValidator(
 	newAuthority := authoritytypes.Authority{
 		Address: proposal.Applicant,
 		PubKey:  "validator", // temp (can improve later)
-		Role:    "VALIDATOR",
+		Role:    authoritytypes.RoleValidator,
 	}
 
 	k.authorityKeeper.SetAuthority(ctx, newAuthority)
 
 	// 🔹 5. mark proposal as used
-	proposal.Status = "ACTIVATED"
+	proposal.Status = types.ProposalStatusActivated
 	if err := k.Keeper.Proposals.Set(ctx, msg.ProposalId, proposal); err != nil {
 		return nil, err
 	}
@@ -228,7 +264,7 @@ func (k msgServer) ActivateValidator(
 		sdk.NewAttribute("domain", proposal.Domain),
 		sdk.NewAttribute("proposal_id", fmt.Sprintf("%d", msg.ProposalId)),
 
-		sdk.NewAttribute("status", "ACTIVE"),
+		sdk.NewAttribute("status", proposal.Status),
 
 		// 🔥 AUDIT
 		sdk.NewAttribute("block_time", ctx.BlockTime().String()),

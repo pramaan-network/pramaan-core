@@ -1,3 +1,9 @@
+// Package app (this file) declares the depinject module configuration for
+// every module in the chain — standard Cosmos SDK modules plus this
+// chain's five custom ones — along with module account permissions
+// (moduleAccPerms) and blocked addresses (blockAccAddrs). See
+// SECURITY_CHANGELOG.md for a flagged finding about the Minter/Burner/
+// Staking permissions granted to the docreg and authority module accounts.
 package app
 
 import (
@@ -91,7 +97,15 @@ var (
 		{Account: nft.ModuleName},
 		{Account: ibctransfertypes.ModuleName, Permissions: []string{authtypes.Minter, authtypes.Burner}},
 		{Account: icatypes.ModuleName},
-		{Account: docregmoduletypes.ModuleName, Permissions: []string{authtypes.Minter, authtypes.Burner, authtypes.Staking}}, {Account: authoritymoduletypes.ModuleName, Permissions: []string{authtypes.Minter, authtypes.Burner, authtypes.Staking}}}
+		// docreg and authority hold module accounts for addressing/events only;
+		// neither keeper mints, burns, sends, or stakes (verified: no bank
+		// MintCoins/BurnCoins/SendCoins/DelegateCoins calls in x/). Granting
+		// Minter/Burner/Staking here violated least privilege — Staking in
+		// particular lets a module account move the bonded/not-bonded pools.
+		// Dropped to no permissions. See SECURITY_CHANGELOG.md.
+		{Account: docregmoduletypes.ModuleName},
+		{Account: authoritymoduletypes.ModuleName},
+	}
 
 	// blocked account addresses
 	blockAccAddrs = []string{

@@ -1,3 +1,7 @@
+// Package app (this file) registers IBC (inter-blockchain communication)
+// modules and light clients. IBC doesn't support depinject app-wiring yet
+// as of this SDK version, so it's wired up manually here rather than
+// through app_config.go like every other module.
 package app
 
 import (

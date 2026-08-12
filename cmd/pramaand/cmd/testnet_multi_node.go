@@ -1,3 +1,8 @@
+// Package cmd (this file) implements `pramaand testnet`: generates a full
+// multi-validator local testnet from scratch — keys, gentxs, genesis file,
+// and per-node config directories. Standard Cosmos SDK scaffold-provided
+// tooling, not PRAMAAN-specific logic (it has no awareness of this chain's
+// five custom modules beyond whatever their default genesis provides).
 package cmd
 
 import (

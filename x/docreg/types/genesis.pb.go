@@ -25,9 +25,18 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // GenesisState defines the docreg module's genesis state.
+//
+// NOTE: the Documents field was added by hand (no working protoc/buf toolchain
+// was available) to fix state loss on export/re-init. It mirrors the pattern
+// ignite/protoc-gen-gogo already generates elsewhere in this repo (see
+// x/authority/types/genesis.pb.go's Authorities field). Binary field tag 0x12
+// = field number 2, wire type 2 (length-delimited), matching the added
+// `repeated Document documents = 2;` in genesis.proto.
 type GenesisState struct {
 	// params defines all the parameters of the module.
 	Params Params `protobuf:"bytes,1,opt,name=params,proto3" json:"params"`
+	// documents contains every registered document, needed so state survives export/re-init.
+	Documents []*Document `protobuf:"bytes,2,rep,name=documents,proto3" json:"documents,omitempty"`
 }
 
 func (m *GenesisState) Reset()         { *m = GenesisState{} }
@@ -68,6 +77,13 @@ func (m *GenesisState) GetParams() Params {
 		return m.Params
 	}
 	return Params{}
+}
+
+func (m *GenesisState) GetDocuments() []*Document {
+	if m != nil {
+		return m.Documents
+	}
+	return nil
 }
 
 func init() {
@@ -112,6 +128,20 @@ func (m *GenesisState) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if len(m.Documents) > 0 {
+		for iNdEx := len(m.Documents) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Documents[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintGenesis(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x12
+		}
+	}
 	{
 		size, err := m.Params.MarshalToSizedBuffer(dAtA[:i])
 		if err != nil {
@@ -144,6 +174,12 @@ func (m *GenesisState) Size() (n int) {
 	_ = l
 	l = m.Params.Size()
 	n += 1 + l + sovGenesis(uint64(l))
+	if len(m.Documents) > 0 {
+		for _, e := range m.Documents {
+			l = e.Size()
+			n += 1 + l + sovGenesis(uint64(l))
+		}
+	}
 	return n
 }
 
@@ -212,6 +248,40 @@ func (m *GenesisState) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if err := m.Params.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Documents", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Documents = append(m.Documents, &Document{})
+			if err := m.Documents[len(m.Documents)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex

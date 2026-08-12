@@ -1,3 +1,5 @@
+// Package types (this file) implements the x/pramaan module's Params
+// helpers. Params is currently an empty struct.
 package types
 
 // NewParams creates a new Params instance.

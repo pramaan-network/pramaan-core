@@ -1,3 +1,5 @@
+// Package keeper implements the x/authority module's state storage and gRPC
+// query/msg servers. This file implements the Params query.
 package keeper
 
 import (
@@ -12,6 +14,10 @@ import (
 	"pramaan/x/authority/types"
 )
 
+// Params handles the QueryParamsRequest gRPC query, returning the module's
+// current on-chain parameters. A not-found params entry is treated as the
+// zero-value Params rather than an error, since a module with no parameters
+// set yet is a valid (if unusual) state, not a fault.
 func (q queryServer) Params(ctx context.Context, req *types.QueryParamsRequest) (*types.QueryParamsResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")

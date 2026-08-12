@@ -11,10 +11,10 @@ import (
 
 func TestMsgUpdateParams(t *testing.T) {
 	f := initFixture(t)
-	ms := keeper.NewMsgServerImpl(f.keeper)
+	ms := keeper.NewMsgServerImpl(f.keeper, nil, nil)
 
 	params := types.DefaultParams()
-	require.NoError(t, f.keeper.Params.Set(f.ctx, params))
+	require.NoError(t, f.keeper.ParamsStore.Set(f.ctx, params))
 
 	authorityStr, err := f.addressCodec.BytesToString(f.keeper.GetAuthority())
 	require.NoError(t, err)

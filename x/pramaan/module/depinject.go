@@ -1,3 +1,5 @@
+// Package pramaan (this file) wires x/pramaan into the app's depinject
+// dependency graph.
 package pramaan
 
 import (
@@ -18,6 +20,8 @@ var _ depinject.OnePerModuleType = AppModule{}
 // IsOnePerModuleType implements the depinject.OnePerModuleType interface.
 func (AppModule) IsOnePerModuleType() {}
 
+// init registers this module's config type and provider function with
+// depinject at package-load time.
 func init() {
 	appconfig.Register(
 		&types.Module{},
@@ -25,6 +29,11 @@ func init() {
 	)
 }
 
+// ModuleInputs lists the dependencies depinject must supply to construct
+// this module: config, storage, codecs, and the expected-keeper interfaces
+// for auth/bank. Unlike docreg/issuer/validatorreg, this module takes no
+// cross-module keepers — nothing else in the app currently calls into
+// x/pramaan's keeper (see the dead-subsystem note in types/keys.go).
 type ModuleInputs struct {
 	depinject.In
 
@@ -37,6 +46,8 @@ type ModuleInputs struct {
 	BankKeeper types.BankKeeper
 }
 
+// ModuleOutputs lists what this module hands back into the dependency
+// graph: its own Keeper and the constructed AppModule.
 type ModuleOutputs struct {
 	depinject.Out
 
@@ -44,6 +55,9 @@ type ModuleOutputs struct {
 	Module        appmodule.AppModule
 }
 
+// ProvideModule is the depinject provider for x/pramaan: it resolves the
+// module's governance authority address, constructs the Keeper, and wraps
+// it in an AppModule.
 func ProvideModule(in ModuleInputs) ModuleOutputs {
 	// default to governance authority if not provided
 	authority := authtypes.NewModuleAddress(types.GovModuleName)

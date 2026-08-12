@@ -1,3 +1,5 @@
+// Package validatorreg (this file) implements the module.AppModuleSimulation
+// hooks used by the Cosmos SDK's randomized simulation testing framework.
 package validatorreg
 
 import (
@@ -23,10 +25,15 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(&validatorregGenesis)
 }
 
-// RegisterStoreDecoder registers a decoder.
+// RegisterStoreDecoder registers a decoder used by the simulation framework
+// to pretty-print raw KV-store diffs for this module. No-op.
 func (am AppModule) RegisterStoreDecoder(_ simtypes.StoreDecoderRegistry) {}
 
-// WeightedOperations returns the all the gov module operations with their respective weights.
+// WeightedOperations returns the randomized message operations the
+// simulator can fire against this module: AddValidator and RemoveValidator,
+// both still stub NoOp implementations. Note the proposal-flow messages
+// (ApplyValidator/ApproveValidator/ActivateValidator) have no simulation
+// operations at all, unlike these two.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
 	operations := make([]simtypes.WeightedOperation, 0)
 	const (
@@ -63,7 +70,8 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 	return operations
 }
 
-// ProposalMsgs returns msgs used for governance proposals for simulations.
+// ProposalMsgs returns the messages this module contributes to randomized
+// governance-proposal simulation. Empty: none registered.
 func (am AppModule) ProposalMsgs(simState module.SimulationState) []simtypes.WeightedProposalMsg {
 	return []simtypes.WeightedProposalMsg{}
 }

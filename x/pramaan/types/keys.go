@@ -1,7 +1,16 @@
+// Package types (this file) defines the x/pramaan module's store keys.
+//
+// x/pramaan is this repo's original/base module (predating the later split
+// into authority/docreg/issuer/validatorreg — see keeper/keeper.go and
+// SECURITY_CHANGELOG.md's "dead pramaan authority subsystem" note). It
+// still holds a legacy Authorities/Threshold subsystem that duplicates
+// x/authority's real one but is not wired into any live message handler.
 package types
 
 import "cosmossdk.io/collections"
 
+// Module identity constants used to register this module with the SDK's
+// module manager and message/query routers.
 const (
 	// ModuleName defines the module name
 	ModuleName = "pramaan"

@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(wsl *)",
+      "PowerShell(wsl -d Ubuntu-22.04 -u dhaval -- /usr/local/go/bin/go version)",
+      "PowerShell(wsl -d Ubuntu-22.04 -u dhaval -- sh -c \"cd ~/projects/pramaan && /usr/local/go/bin/go env GOMOD GOVERSION\")",
+      "PowerShell(wsl -d Ubuntu-22.04 -u dhaval -- sh -c \"command -v ignite && ignite version || true\")",
+      "PowerShell(wsl -d Ubuntu-22.04 -u dhaval -- sh -c \"command -v ignite; ignite version 2>&1; true\")",
+      "PowerShell(wsl -d Ubuntu-22.04 -u dhaval -- sh -c \"cd ~/projects/pramaan && /usr/local/go/bin/go build ./... 2>&1\")",
+      "PowerShell(wsl -d Ubuntu-22.04 -u dhaval -- sh -c \"cd ~/projects/pramaan && /usr/local/go/bin/go test ./... 2>&1\")",
+      "Bash(git -c safe.directory='*' status)",
+      "Bash(git -c safe.directory='*' log --oneline -5)",
+      "Bash(go build *)",
+      "Bash(go env *)",
+      "Bash(wsl.exe *)",
+      "Bash(go version *)",
+      "Bash(docker version *)",
+      "Bash(MSYS_NO_PATHCONV=1 MSYS2_ARG_CONV_EXCL='*' wsl.exe *)",
+      "Bash(echo \"exit=$?\")",
+      "Bash(docker context *)"
+    ]
+  }
+}

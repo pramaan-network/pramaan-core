@@ -1,3 +1,10 @@
+// Package app assembles the PRAMAAN Cosmos SDK application: it wires the
+// standard SDK modules (auth, bank, staking, slashing, mint, distribution,
+// gov, upgrade, IBC, ...) together with this chain's five custom modules
+// (authority, docreg, issuer, pramaan, validatorreg) via depinject. Module
+// account permissions and blocked addresses are defined in app_config.go;
+// IBC-specific (non-depinject) wiring lives in ibc.go; genesis/export
+// helpers live in genesis.go/export.go/genesis_account.go.
 package app
 
 import (
@@ -51,6 +58,8 @@ import (
 	issuermodulekeeper "pramaan/x/issuer/keeper"
 	pramaanmodulekeeper "pramaan/x/pramaan/keeper"
 	validatorregmodulekeeper "pramaan/x/validatorreg/keeper"
+
+	//stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 )
 
 const (
@@ -103,7 +112,9 @@ type App struct {
 	TransferKeeper      ibctransferkeeper.Keeper
 
 	// simulation manager
-	sm                 *module.SimulationManager
+	sm *module.SimulationManager
+
+	// PRAMAAN's five custom modules.
 	PramaanKeeper      pramaanmodulekeeper.Keeper
 	DocregKeeper       docregmodulekeeper.Keeper
 	ValidatorregKeeper validatorregmodulekeeper.Keeper
@@ -203,6 +214,29 @@ func New(
 
 	// build app
 	app.App = appBuilder.Build(db, traceStore, baseAppOptions...)
+
+	// NOTE: the commented-out block below shows a prior intent to explicitly
+	// order this chain's custom modules' InitGenesis to run after
+	// genutil/staking (so e.g. an authority/validator genesis state could
+	// assume gentx-derived validators already exist). It's currently
+	// disabled, so InitGenesis order falls back to the module manager's
+	// default (registration order in app_config.go). Worth revisiting
+	// deliberately if a custom module's genesis ever needs to depend on
+	// staking having already run — don't just uncomment this blind, since
+	// stakingtypes isn't even imported right now (it's commented out above
+	// too) and the exact ordering needs re-verifying against the current
+	// module list.
+	//
+	// app.ModuleManager.SetOrderInitGenesis(
+	// genutiltypes.ModuleName,
+	// stakingtypes.ModuleName,
+	//
+	// // your modules AFTER staking
+	// "authority",
+	// "validatorreg",
+	// "issuer",
+	// "docreg",
+	// )
 
 	// register legacy modules
 	if err := app.registerIBCModules(appOpts); err != nil {

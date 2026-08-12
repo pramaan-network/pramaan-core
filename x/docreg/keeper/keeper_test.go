@@ -1,7 +1,6 @@
 package keeper_test
 
 import (
-	"context"
 	"testing"
 
 	"cosmossdk.io/core/address"
@@ -19,7 +18,7 @@ import (
 )
 
 type fixture struct {
-	ctx          context.Context
+	ctx          sdk.Context
 	keeper       keeper.Keeper
 	addressCodec address.Codec
 }
@@ -45,7 +44,7 @@ func initFixture(t *testing.T) *fixture {
 	)
 
 	// Initialize params
-	if err := k.Params.Set(ctx, types.DefaultParams()); err != nil {
+	if err := k.ParamsStore.Set(ctx, types.DefaultParams()); err != nil {
 		t.Fatalf("failed to set params: %v", err)
 	}
 

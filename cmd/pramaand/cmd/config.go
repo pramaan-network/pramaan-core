@@ -1,3 +1,8 @@
+// Package cmd (this file) provides hooks for overriding the default
+// CometBFT (config.toml) and app (app.toml) config templates written by
+// `pramaand init`. Both are currently left at SDK defaults — see the
+// commented-out examples inline for how a validator-tunable default (e.g.
+// min gas prices) would be set here.
 package cmd
 
 import (

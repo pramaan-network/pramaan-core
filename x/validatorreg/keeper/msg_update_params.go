@@ -1,3 +1,8 @@
+// Package keeper (this file) implements the x/validatorreg MsgUpdateParams
+// handler: a standard gov-gated params update. See
+// SECURITY_CHANGELOG.md #20 — this handler's authority check was
+// permanently unsatisfiable until the module's depinject wiring was fixed
+// to stop defaulting to an empty byte slice.
 package keeper
 
 import (
@@ -9,6 +14,9 @@ import (
 	"pramaan/x/validatorreg/types"
 )
 
+// UpdateParams handles MsgUpdateParams: requires the signer to match the
+// module's configured authority (the gov module account by default — see
+// module/depinject.go), then validates and persists the new Params.
 func (k msgServer) UpdateParams(ctx context.Context, req *types.MsgUpdateParams) (*types.MsgUpdateParamsResponse, error) {
 	authority, err := k.addressCodec.StringToBytes(req.Authority)
 	if err != nil {

@@ -8,6 +8,7 @@ import (
 	"cosmossdk.io/depinject/appconfig"
 
 	"github.com/cosmos/cosmos-sdk/codec"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	authoritytypes "pramaan/x/authority/types"
 	"pramaan/x/validatorreg/keeper"
@@ -51,8 +52,14 @@ type ModuleOutputs struct {
 
 func ProvideModule(in ModuleInputs) ModuleOutputs {
 
-	// ⚠️ KEEP EMPTY / NEUTRAL AUTHORITY (NOT USED)
-	authority := []byte{}
+	// Default UpdateParams authority to the gov module account (matches every
+	// other module in this chain), overridable via app_config.go. Previously
+	// hardcoded to an empty byte slice, which made MsgUpdateParams permanently
+	// unauthorizable — no address can ever equal an empty slice.
+	authority := authtypes.NewModuleAddress(types.GovModuleName)
+	if in.Config.Authority != "" {
+		authority = authtypes.NewModuleAddressOrBech32Address(in.Config.Authority)
+	}
 
 	k := keeper.NewKeeper(
 		in.StoreService,

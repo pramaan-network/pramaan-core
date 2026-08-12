@@ -1,3 +1,5 @@
+// Package keeper (this file) implements the Params query for
+// x/validatorreg.
 package keeper
 
 import (
@@ -12,6 +14,8 @@ import (
 	"pramaan/x/validatorreg/types"
 )
 
+// Params handles the QueryParamsRequest gRPC query, returning the module's
+// current on-chain parameters.
 func (q queryServer) Params(ctx context.Context, req *types.QueryParamsRequest) (*types.QueryParamsResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")

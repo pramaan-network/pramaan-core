@@ -1,3 +1,6 @@
+// Package app (this file) defines the top-level GenesisState type: a raw
+// map from module name to that module's own genesis JSON blob, keyed
+// exactly as each AppModuleBasic.Name() returns.
 package app
 
 import (

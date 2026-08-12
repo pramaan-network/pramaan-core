@@ -1,3 +1,7 @@
+// Package app (this file) defines GenesisAccount, a genesis-JSON-friendly
+// account type that can represent either a vesting account or a module
+// account — used when hand-authoring or migrating a genesis file that needs
+// to seed non-default account types. Standard Cosmos SDK boilerplate.
 package app
 
 import (

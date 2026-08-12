@@ -1,3 +1,12 @@
+// Package app (this file) implements `pramaand export`: dumping the
+// chain's current state back out as a genesis file, optionally
+// "zero-height" (resetting staking/distribution/slashing bookkeeping so the
+// exported genesis can bootstrap a fresh chain rather than continue the
+// existing one). This is standard Cosmos SDK boilerplate, not
+// PRAMAAN-specific logic — none of it currently accounts for this chain's
+// five custom modules, since ExportGenesisForModules handles those
+// generically via each module's own ExportGenesis (see keeper/genesis.go in
+// each x/* package).
 package app
 
 import (

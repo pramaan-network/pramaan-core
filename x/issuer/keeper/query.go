@@ -1,3 +1,5 @@
+// Package keeper (this file) implements the gRPC QueryServer for x/issuer:
+// single-issuer lookup and a full listing.
 package keeper
 
 import (
@@ -11,10 +13,12 @@ import (
 var _ types.QueryServer = queryServer{}
 
 // NewQueryServerImpl returns an implementation of the QueryServer interface
+// backed by the given Keeper.
 func NewQueryServerImpl(k Keeper) types.QueryServer {
 	return queryServer{k}
 }
 
+// queryServer adapts a Keeper to the generated types.QueryServer interface.
 type queryServer struct {
 	k Keeper
 }
@@ -23,6 +27,8 @@ type queryServer struct {
 // GET ISSUER
 // ==============================
 
+// GetIssuer handles the QueryGetIssuerRequest gRPC query: look up a single
+// issuer by address.
 func (k queryServer) GetIssuer(
 	goCtx context.Context,
 	req *types.QueryGetIssuerRequest,
@@ -44,6 +50,10 @@ func (k queryServer) GetIssuer(
 // LIST ISSUERS
 // ==============================
 
+// Issuers handles the QueryIssuersRequest gRPC query: returns every
+// registered issuer. Not paginated — fine while the issuer set is small,
+// but would need pagination if it grows large (loads the full result set
+// into memory, same tradeoff as x/authority's Authorities query).
 func (k queryServer) Issuers(
 	goCtx context.Context,
 	req *types.QueryIssuersRequest,

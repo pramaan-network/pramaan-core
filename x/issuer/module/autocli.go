@@ -1,3 +1,5 @@
+// Package issuer (this file) implements the x/issuer CLI command wiring
+// (autocli).
 package issuer
 
 import (
@@ -6,7 +8,11 @@ import (
 	"pramaan/x/issuer/types"
 )
 
-// AutoCLIOptions implements the autocli.HasAutoCLIConfig interface.
+// AutoCLIOptions implements the autocli.HasAutoCLIConfig interface. Note
+// CreateIssuer/RevokeIssuer aren't given explicit CLI command options here
+// (only Params query and the skipped UpdateParams tx are), so they fall
+// back to autocli's default auto-generated command from the proto
+// definition rather than a hand-tuned one.
 func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 	return &autocliv1.ModuleOptions{
 		Query: &autocliv1.ServiceCommandDescriptor{

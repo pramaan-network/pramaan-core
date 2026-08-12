@@ -1,3 +1,6 @@
+// Package simulation (this file) implements the randomized-testing
+// operation for MsgRemoveValidator. See add_validator.go for the
+// package-level overview.
 package simulation
 
 import (
@@ -12,6 +15,8 @@ import (
 	"pramaan/x/validatorreg/types"
 )
 
+// SimulateMsgRemoveValidator builds a simulation operation for
+// MsgRemoveValidator. Currently a stub — always a NoOp.
 func SimulateMsgRemoveValidator(
 	ak types.AuthKeeper,
 	bk types.BankKeeper,

@@ -1,3 +1,6 @@
+// Package types (this file) declares the "expected keeper" interfaces
+// x/pramaan depends on: narrow interfaces onto auth/bank rather than their
+// concrete keeper types.
 package types
 
 import (

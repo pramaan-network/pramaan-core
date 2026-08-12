@@ -1,3 +1,8 @@
+// Package cmd (this file) implements `pramaand in-place-testnet`: mutates
+// an existing local mainnet node's application/consensus state in place to
+// swap in a new single-validator set for local testing, rather than
+// standing up a fresh chain from scratch. Standard Cosmos SDK
+// scaffold-provided tooling, not PRAMAAN-specific logic.
 package cmd
 
 import (
@@ -43,6 +48,10 @@ type valArgs struct {
 	homeDir            string
 }
 
+// NewInPlaceTestnetCmd builds the `in-place-testnet` command: takes a
+// chain ID, a new validator's operator address, and (via flags) the
+// validator's private key and a list of accounts to fund, then rewrites
+// local state to match.
 func NewInPlaceTestnetCmd() *cobra.Command {
 	cmd := server.InPlaceTestnetCreator(newTestnetApp)
 	cmd.Short = "Updates chain's application and consensus state with provided validator info and starts the node"

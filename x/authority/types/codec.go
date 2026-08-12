@@ -1,3 +1,7 @@
+// Package types (this file) registers the x/authority module's message
+// types with both the legacy Amino codec and the modern proto-based
+// interface registry, so transactions containing these messages can be
+// signed, decoded, and routed.
 package types
 
 import (

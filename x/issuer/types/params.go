@@ -1,3 +1,6 @@
+// Package types (this file) implements the x/issuer module's Params
+// helpers. Params is currently an empty struct — no tunable parameters are
+// defined yet.
 package types
 
 // NewParams creates a new Params instance.

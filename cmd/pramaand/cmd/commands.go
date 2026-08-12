@@ -1,3 +1,7 @@
+// Package cmd (this file) assembles the full pramaand command tree
+// (start/init/testnet/query/tx/keys/pruning/snapshot/...) and provides the
+// newApp/appExport factory functions the server package uses to construct
+// and export an app.App instance.
 package cmd
 
 import (
@@ -27,6 +31,8 @@ import (
 	"pramaan/app"
 )
 
+// initRootCmd attaches every subcommand (init/testnet/start/query/tx/keys/
+// pruning/snapshot/status/config) to the root command.
 func initRootCmd(
 	rootCmd *cobra.Command,
 	txConfig client.TxConfig,
@@ -56,10 +62,15 @@ func initRootCmd(
 	)
 }
 
-// addModuleInitFlags adds more flags to the start command.
+// addModuleInitFlags adds more flags to the start command. Currently a
+// no-op: no custom module needs to inject its own start-command flags.
 func addModuleInitFlags(startCmd *cobra.Command) {
 }
 
+// queryCommand builds the `pramaand query` (alias `q`) subcommand tree:
+// generic RPC/tx/block queries. Module-specific query commands (docreg,
+// authority, etc.) are attached separately via autocli in root.go, not
+// listed explicitly here.
 func queryCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:                        "query",
@@ -83,6 +94,9 @@ func queryCommand() *cobra.Command {
 	return cmd
 }
 
+// txCommand builds the `pramaand tx` subcommand tree: generic
+// sign/broadcast/encode/decode/simulate helpers. Module-specific tx
+// commands are attached separately via autocli, not listed explicitly here.
 func txCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:                        "tx",

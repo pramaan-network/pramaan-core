@@ -1,3 +1,5 @@
+// Package keeper (this file) implements the x/issuer MsgServer:
+// CreateIssuer and RevokeIssuer.
 package keeper
 
 import (
@@ -6,13 +8,21 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
+	authoritytypes "pramaan/x/authority/types"
 	"pramaan/x/issuer/types"
 )
 
+// msgServer adapts a Keeper to the generated types.MsgServer interface.
+// Unlike docreg/validatorreg, the authority/validator keepers this server
+// needs aren't passed to the constructor separately — they're already
+// embedded fields on Keeper itself (see keeper.go), so NewMsgServerImpl
+// only needs the one Keeper argument.
 type msgServer struct {
 	Keeper
 }
 
+// NewMsgServerImpl returns an implementation of the MsgServer interface
+// backed by the given Keeper.
 func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 	return &msgServer{Keeper: keeper}
 }
@@ -23,6 +33,13 @@ var _ types.MsgServer = &msgServer{}
 // CREATE ISSUER
 // ==============================
 
+// CreateIssuer handles MsgCreateIssuer. Authorization chain, checked in
+// order: the creator must hold the VALIDATOR role in x/authority; the
+// creator must also be a registered, active validator in x/validatorreg;
+// the validator's registered domain must match the requested issuer domain
+// (a validator for "education" can't create an issuer for "land_property");
+// and the target issuer address must not already exist. Only after all
+// four checks pass is the new Issuer record created.
 func (k msgServer) CreateIssuer(
 	goCtx context.Context,
 	msg *types.MsgCreateIssuer,
@@ -30,13 +47,21 @@ func (k msgServer) CreateIssuer(
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	// 🔴 0. BOUND FREE-FORM INPUTS (state-bloat / DoS guard — see types.Max*Len)
+	if len(msg.Domain) > types.MaxDomainLen {
+		return nil, fmt.Errorf("domain exceeds max length %d", types.MaxDomainLen)
+	}
+	if len(msg.Address) > types.MaxAddressLen {
+		return nil, fmt.Errorf("address exceeds max length %d", types.MaxAddressLen)
+	}
+
 	// 🔴 1. CHECK AUTHORITY ROLE = VALIDATOR
 	auth, found := k.authorityKeeper.GetAuthority(ctx, msg.Creator)
 	if !found {
 		return nil, fmt.Errorf("creator not found in authority")
 	}
 
-	if auth.Role != "VALIDATOR" {
+	if auth.Role != authoritytypes.RoleValidator {
 		return nil, fmt.Errorf("only VALIDATOR can create issuer")
 	}
 
@@ -91,6 +116,11 @@ func (k msgServer) CreateIssuer(
 // REVOKE ISSUER
 // ==============================
 
+// RevokeIssuer handles MsgRevokeIssuer: deactivates (sets Active = false)
+// an issuer, but only its own creating validator may do so — there's no
+// path here for a higher role (e.g. ROOT or AUTHORITY) to revoke a
+// misbehaving issuer if its creating validator is unavailable or
+// compromised, which is worth keeping in mind for incident response.
 func (k msgServer) RevokeIssuer(
 	goCtx context.Context,
 	msg *types.MsgRevokeIssuer,

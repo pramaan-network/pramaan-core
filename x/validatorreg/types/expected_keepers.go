@@ -1,3 +1,5 @@
+// Package types (this file) declares the "expected keeper" interfaces
+// x/validatorreg depends on.
 package types
 
 import (
@@ -26,6 +28,13 @@ type ParamSubspace interface {
 	Set(context.Context, []byte, interface{})
 }
 
+// PramaanKeeper is injected into this module's msgServer (see
+// keeper/msg_server.go's NewMsgServerImpl) but is currently unused by every
+// message handler — all of them check authorityKeeper instead. See
+// SECURITY_CHANGELOG.md's "dead pramaan authority subsystem" entry: this is
+// wiring for a second, parallel authority system (x/pramaan's own
+// Authorities map) that duplicates x/authority's real one and isn't
+// actually consulted anywhere in this module.
 type PramaanKeeper interface {
 	IsAuthority(ctx sdk.Context, addr string) bool
 }

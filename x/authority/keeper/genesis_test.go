@@ -3,22 +3,29 @@ package keeper_test
 import (
 	"testing"
 
-	"pramaan/x/authority/types"
-
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/stretchr/testify/require"
+
+	"pramaan/x/authority/types"
 )
 
 func TestGenesis(t *testing.T) {
+	f := initFixture(t)
+
+	rootAddrStr, err := f.addressCodec.BytesToString(authtypes.NewModuleAddress("root-test"))
+	require.NoError(t, err)
+
+	params := types.DefaultParams()
 	genesisState := types.GenesisState{
-		Params: types.DefaultParams(),
+		Params: &params,
+		Authorities: []*types.Authority{
+			{Address: rootAddrStr, Role: types.RoleRoot},
+		},
 	}
 
-	f := initFixture(t)
-	err := f.keeper.InitGenesis(f.ctx, genesisState)
-	require.NoError(t, err)
-	got, err := f.keeper.ExportGenesis(f.ctx)
-	require.NoError(t, err)
+	f.keeper.InitGenesis(f.ctx, genesisState)
+	got := f.keeper.ExportGenesis(f.ctx)
 	require.NotNil(t, got)
 
-	require.EqualExportedValues(t, genesisState.Params, got.Params)
+	require.EqualExportedValues(t, *genesisState.Params, *got.Params)
 }
